@@ -1,0 +1,203 @@
+<!doctype html><html lang="ja"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OpenGym Tokyo</title><meta name="theme-color" content="#000">
+<style>
+:root{--cy:#4FC3F7;--gr:#3DDC97;--pk:#FF4FA3;--bg:#000;--ln:#222;--mu:#8a8a8a}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:#fff;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+ line-height:1.5;padding-bottom:76px}
+header{padding:18px 20px 12px;border-bottom:1px solid var(--ln)}
+h1{font-size:19px;font-weight:800;letter-spacing:-.01em}
+h1 span{color:var(--cy)}
+.sub{font-size:11px;color:var(--mu);margin-top:3px}
+main{padding:18px 20px;max-width:760px;margin:0 auto}
+.pane{display:none}.pane.on{display:block}
+h2{font-size:13px;color:var(--mu);font-weight:700;letter-spacing:.06em;margin:0 0 12px}
+.hero{font-size:52px;font-weight:800;line-height:1;letter-spacing:-.03em}
+.hero small{font-size:19px;color:var(--mu);font-weight:700;margin-left:5px}
+.lead{font-size:14px;color:var(--mu);margin:10px 0 22px}
+.bar{margin-bottom:13px}
+.bar .t{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
+.bar .t b{font-weight:700}.bar .t i{font-style:normal;color:var(--mu);font-size:11px}
+.track{height:7px;background:#181818;border-radius:4px;overflow:hidden}
+.fill{height:100%;border-radius:4px}
+.lo{background:var(--pk)}.mid{background:var(--cy)}.hi{background:var(--gr)}
+.note{font-size:11px;color:#666;margin-top:16px;line-height:1.7}
+select,input,textarea,button{font-family:inherit;font-size:14px}
+select,input,textarea{width:100%;background:#0e0e0e;border:1px solid var(--ln);color:#fff;
+ border-radius:9px;padding:11px 12px;margin-bottom:11px}
+textarea{min-height:104px;resize:vertical;font-size:12px;line-height:1.6}
+button{background:var(--cy);color:#000;border:0;border-radius:9px;padding:12px 16px;
+ font-weight:800;cursor:pointer}
+button.g{background:var(--gr)}button.sm{padding:8px 12px;font-size:12px}
+button.o{background:transparent;color:var(--cy);border:1px solid #2a3a44}
+.card{background:#0c0c0c;border:1px solid var(--ln);border-radius:11px;padding:13px 15px;margin-bottom:10px}
+.card .n{font-weight:800;font-size:15px}
+.card .a{font-size:12px;color:var(--mu);margin-top:3px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.chip{font-size:10px;border:1px solid #2c2c2c;color:#9a9a9a;border-radius:20px;padding:3px 9px}
+.chip.ok{border-color:#1e4638;color:var(--gr)}
+.chip.no{border-color:#4a1e33;color:#a8496f}
+.mrow{display:flex;gap:9px;align-items:center;margin-bottom:9px}
+.mrow .nm{flex:1;font-weight:700;font-size:14px}
+.mrow .rec{font-size:11px;color:var(--mu)}
+.w{display:flex;gap:7px;align-items:center}
+.w b{min-width:52px;text-align:right;font-size:19px;font-weight:800}
+.stp{background:#151515;color:#fff;border:1px solid var(--ln);width:36px;height:36px;
+ border-radius:8px;font-size:17px;font-weight:800;padding:0}
+.up{color:var(--gr);font-weight:800;font-size:12px}
+nav{position:fixed;bottom:0;left:0;right:0;background:#080808;border-top:1px solid var(--ln);
+ display:flex;padding:7px 0 max(7px,env(safe-area-inset-bottom))}
+nav a{flex:1;text-align:center;color:#666;text-decoration:none;font-size:10px;padding:5px 0;font-weight:700}
+nav a.on{color:var(--cy)}nav a i{display:block;font-size:17px;font-style:normal;margin-bottom:1px}
+.ok{color:var(--gr)}.warn{color:var(--pk)}
+.kpi{display:flex;gap:20px;margin-bottom:18px}
+.kpi div b{display:block;font-size:27px;font-weight:800;line-height:1.1}
+.kpi div i{font-style:normal;font-size:11px;color:var(--mu)}
+pre{background:#0a0a0a;border:1px solid var(--ln);border-radius:9px;padding:11px;
+ font-size:11px;overflow:auto;color:#9fd8ef;line-height:1.55}
+</style></head><body>
+<header>
+  <h1>OpenGym <span>Tokyo</span></h1>
+  <div class="sub">公営ジムの記録と、施設データを育てる仕組み</div>
+</header>
+<main>
+
+<section id="p-data" class="pane on">
+  <h2>オープンデータの現実</h2>
+  <div class="kpi">
+    <div><b id="k-mun">–</b><i>自治体</i></div>
+    <div><b id="k-fac">–</b><i>スポーツ施設</i></div>
+    <div><b class="ok" id="k-gym">–</b><i>トレーニング室あり</i></div>
+    <div><b class="warn" id="k-col">–</b><i>定義カラム数</i></div>
+  </div>
+  <div class="hero" id="k-lat">–<small>が緯度を持つ</small></div>
+  <div class="lead">器は198カラム定義されている。実際に埋まっているのは、これだけ。</div>
+  <div id="bars"></div>
+  <div class="note" id="src"></div>
+</section>
+
+<section id="p-find" class="pane">
+  <h2>トレーニング室のある公営施設</h2>
+  <select id="f-mun"></select>
+  <div id="list"></div>
+</section>
+
+<section id="p-conf" class="pane">
+  <h2>施設設定をつくる（JSONを書かせない）</h2>
+  <div class="lead">生成AIにこのまま貼るだけ。返ってきたJSONを下に貼れば取り込まれる。</div>
+  <pre id="prompt"></pre>
+  <button class="sm o" onclick="cp()">プロンプトをコピー</button>
+  <div style="height:14px"></div>
+  <textarea id="json" placeholder='ここにAIが返したJSONを貼る'></textarea>
+  <button class="g" onclick="imp()">取り込む</button>
+  <div class="note" id="conf-st"></div>
+</section>
+
+<section id="p-log" class="pane">
+  <h2>きろく</h2>
+  <select id="l-fac"></select>
+  <div id="machines"></div>
+  <div class="note" id="log-st"></div>
+</section>
+
+</main>
+<nav>
+  <a href="#" class="on" data-p="data"><i>◱</i>データ</a>
+  <a href="#" data-p="find"><i>◎</i>さがす</a>
+  <a href="#" data-p="conf"><i>✦</i>設定</a>
+  <a href="#" data-p="log"><i>▲</i>きろく</a>
+</nav>
+<script src="data.js"></script>
+<script>
+const $=s=>document.querySelector(s), C=OGT.coverage, F=OGT.facilities;
+const LS={g:(k,d)=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d)),
+          s:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
+
+/* --- データ --- */
+$('#k-mun').textContent=C.municipalities; $('#k-fac').textContent=C.facilities;
+$('#k-gym').textContent=C.gyms; $('#k-col').textContent=C.max_columns;
+$('#k-lat').innerHTML=C.coverage['緯度'].pct+'%<small>の施設しか緯度を持たない</small>';
+const ORD=['緯度','経度','車椅子可','フリーWi-Fi','更衣室','シャワー室','利用可能曜日','開始時間','URL','電話番号','所在地_連結表記'];
+$('#bars').innerHTML=ORD.filter(k=>C.coverage[k]).map(k=>{const v=C.coverage[k];
+  const c=v.pct<35?'lo':v.pct<70?'mid':'hi';
+  return `<div class="bar"><div class="t"><b>${k}</b><i>${v.pct}%　${v.filled}/${v.total}</i></div>
+  <div class="track"><div class="fill ${c}" style="width:${v.pct}%"></div></div></div>`}).join('');
+$('#src').innerHTML=`出典：${C.source}<br>ライセンス：${C.license}　／　${C.municipalities}自治体・${C.facilities}施設の公開CSVを全カラム検査した実測値`;
+
+/* --- さがす --- */
+const muns=[...new Set(F.map(f=>f.自治体))].sort();
+$('#f-mun').innerHTML='<option value="">すべての自治体（'+F.length+'施設）</option>'+muns.map(m=>`<option>${m}</option>`).join('');
+const flag=(v,l)=>`<span class="chip ${v?'ok':'no'}">${l}${v?'':' 不明'}</span>`;
+function draw(){const m=$('#f-mun').value;
+  $('#list').innerHTML=F.filter(f=>!m||f.自治体===m).map(f=>`<div class="card">
+    <div class="n">${f.名称}</div>
+    <div class="a">${f.自治体}　${f['所在地_連結表記']||''}</div>
+    <div class="chips">${flag(f.開始時間,'開館時間')}${flag(f.緯度,'地図')}${flag(f.更衣室,'更衣室')}${flag(f['フリーWi-Fi'],'Wi-Fi')}${flag(f.車椅子可,'車椅子')}</div>
+  </div>`).join('');}
+$('#f-mun').onchange=draw; draw();
+
+/* --- 設定 --- */
+const P=`あなたは公営ジムの設備をJSONに整理する担当です。
+次の口頭メモを、下のスキーマのJSONだけで出力してください。説明文は不要です。
+
+# スキーマ
+{"facility":"施設名","machines":[{"name":"マシン名","min":最小kg,"max":最大kg,"step":刻みkg}]}
+
+# 口頭メモ
+（例）光が丘体育館。ラットプルダウンは10から80まで5キロ刻み。
+レッグプレスは20から150まで10キロ刻み。チェストプレスは5から60まで2.5キロ刻み。`;
+$('#prompt').textContent=P;
+function cp(){navigator.clipboard?.writeText(P);$('#conf-st').textContent='コピーしました。生成AIに貼ってください。';}
+function imp(){try{const o=JSON.parse($('#json').value);
+  if(!o.facility||!Array.isArray(o.machines))throw 0;
+  const all=LS.g('ogt_conf',{}); all[o.facility]=o.machines; LS.s('ogt_conf',all);
+  $('#conf-st').innerHTML=`<span class="ok">取り込みました：${o.facility}／マシン${o.machines.length}件。「きろく」で使えます。</span>`;
+  facs();}catch(e){$('#conf-st').innerHTML='<span class="warn">JSONとして読めませんでした。</span>';}}
+
+/* --- きろく --- */
+const DEMO={"光が丘体育館":[{name:"ラットプルダウン",min:10,max:80,step:5},
+ {name:"レッグプレス",min:20,max:150,step:10},{name:"チェストプレス",min:5,max:60,step:2.5}]};
+if(!localStorage.getItem('ogt_conf'))LS.s('ogt_conf',DEMO);
+function facs(){const c=LS.g('ogt_conf',{});const k=Object.keys(c);
+  $('#l-fac').innerHTML=k.map(x=>`<option>${x}</option>`).join('')||'<option>設定がありません</option>';mach();}
+function mach(){const c=LS.g('ogt_conf',{}),f=$('#l-fac').value,ms=c[f]||[],log=LS.g('ogt_log',[]);
+  if(!ms.length){$('#machines').innerHTML='<div class="note">「設定」タブで施設設定を取り込んでください。</div>';return;}
+  $('#machines').innerHTML=ms.map((m,i)=>{
+    const past=log.filter(l=>l.f===f&&l.m===m.name).sort((a,b)=>b.t-a.t);
+    const last=past[0];
+    const days=last?Math.floor((Date.now()-last.t)/864e5):null;
+    const cur=last?last.w:m.min;
+    return `<div class="card"><div class="mrow"><div class="nm">${m.name}</div>
+      <div class="rec">${last?`前回 ${last.w}kg・${days===0?'今日':days+'日前'}`:'記録なし'}</div></div>
+      <div class="mrow"><div class="w">
+        <button class="stp" onclick="adj(${i},-1)">−</button>
+        <b id="w${i}">${cur}</b><span style="color:#666;font-size:12px">kg</span>
+        <button class="stp" onclick="adj(${i},1)">＋</button>
+      </div><div style="flex:1"></div>
+      <button class="sm g" onclick="save(${i})">記録</button></div>
+      <div id="s${i}" class="rec"></div></div>`}).join('');
+  window._ms=ms;}
+function adj(i,d){const m=window._ms[i],e=$('#w'+i);
+  let v=parseFloat(e.textContent)+d*m.step; v=Math.max(m.min,Math.min(m.max,v));
+  e.textContent=Number.isInteger(v)?v:v.toFixed(1);}
+function save(i){const m=window._ms[i],f=$('#l-fac').value,w=parseFloat($('#w'+i).textContent);
+  const log=LS.g('ogt_log',[]);
+  const prev=log.filter(l=>l.f===f&&l.m===m.name).sort((a,b)=>b.t-a.t)[0];
+  log.push({f,m:m.name,w,t:Date.now()});LS.s('ogt_log',log);
+  $('#s'+i).innerHTML=(prev&&w>prev.w)?`<span class="up">UP↑ 前回 ${prev.w}kg → ${w}kg</span>`:`保存しました（${w}kg）`;
+  $('#log-st').textContent=`累計 ${log.length} 件を端末内に保存（オフライン動作）`;}
+$('#l-fac').onchange=mach; facs();
+
+/* --- nav --- */
+
+/* hash deep-link: #data #find #conf #log */
+function go(id){document.querySelectorAll('nav a').forEach(x=>x.classList.toggle('on',x.dataset.p===id));
+ document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+ const el=$('#p-'+id); if(el)el.classList.add('on');}
+(function(){const h=(location.hash||'').replace('#','');if(['data','find','conf','log'].includes(h))go(h);})();
+document.querySelectorAll('nav a').forEach(a=>a.onclick=e=>{e.preventDefault();
+  document.querySelectorAll('nav a').forEach(x=>x.classList.remove('on'));a.classList.add('on');
+  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
+  $('#p-'+a.dataset.p).classList.add('on');location.hash=a.dataset.p;window.scrollTo(0,0);});
+</script></body></html>

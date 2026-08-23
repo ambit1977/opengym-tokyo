@@ -1,0 +1,73 @@
+{
+ "source": "東京都オープンデータカタログサイト／自治体標準オープンデータセット「スポーツ施設一覧」",
+ "license": "CC BY 4.0",
+ "municipalities": 55,
+ "facilities": 890,
+ "gyms": 75,
+ "max_columns": 198,
+ "coverage": {
+  "緯度": {
+   "filled": 268,
+   "total": 890,
+   "pct": 30.1
+  },
+  "経度": {
+   "filled": 268,
+   "total": 890,
+   "pct": 30.1
+  },
+  "利用可能曜日": {
+   "filled": 499,
+   "total": 890,
+   "pct": 56.1
+  },
+  "開始時間": {
+   "filled": 511,
+   "total": 890,
+   "pct": 57.4
+  },
+  "終了時間": {
+   "filled": 506,
+   "total": 890,
+   "pct": 56.9
+  },
+  "更衣室": {
+   "filled": 355,
+   "total": 890,
+   "pct": 39.9
+  },
+  "シャワー室": {
+   "filled": 353,
+   "total": 890,
+   "pct": 39.7
+  },
+  "フリーWi-Fi": {
+   "filled": 258,
+   "total": 889,
+   "pct": 29.0
+  },
+  "車椅子可": {
+   "filled": 230,
+   "total": 890,
+   "pct": 25.8
+  },
+  "URL": {
+   "filled": 512,
+   "total": 890,
+   "pct": 57.5
+  },
+  "電話番号": {
+   "filled": 618,
+   "total": 890,
+   "pct": 69.4
+  },
+  "所在地_連結表記": {
+   "filled": 890,
+   "total": 890,
+   "pct": 100.0
+  }
+ },
+ "errors": [
+  "立川市"
+ ]
+}
