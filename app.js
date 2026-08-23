@@ -2,14 +2,11 @@ const $=s=>document.querySelector(s), C=OGT.coverage, F=OGT.facilities, D=OGT.de
 const LS={g:(k,d)=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d)),s:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
 const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-/* 部位アイコン：鍛える部位を色で示す */
-const PART={upper:'up',lower:'lo',core:'co',arm:'ar',cardio:'all'};
+/* 部位アイコン：カテゴリごとに専用の線画アイコンを使う */
+const ICON={upper:'ic-upper',lower:'ic-lower',core:'ic-core',arm:'ic-arm',cardio:'ic-cardio'};
 function figure(cat){
-  const p=PART[cat]||'';
-  const css=p==='all'
-    ? '.fig-'+cat+' .up,.fig-'+cat+' .lo,.fig-'+cat+' .co,.fig-'+cat+' .ar{fill:#E8620F}'
-    : (p?'.fig-'+cat+' .'+p+'{fill:#E8620F}':'');
-  return `<svg class="fig fig-${cat}" viewBox="0 0 44 70"><style>${css}</style><use href="#fig"/></svg>`;
+  const id=ICON[cat]||'ic-all';
+  return `<div class="micon"><svg width="30" height="30" viewBox="0 0 48 48"><use href="#${id}"/></svg></div>`;
 }
 
 /* ============ まちのジム ============ */
@@ -43,7 +40,7 @@ function confAll(){const c=LS.g('ogt_conf',{});
  LS.s('ogt_conf',c);return c;}
 function detailOf(n){for(const id in D)if(D[id].name===n)return D[id];return null;}
 function facs(){const c=confAll(),k=Object.keys(c);
- $('#l-fac').innerHTML=k.map(x=>`<option>${esc(x)}</option>`).join('');mach();shared();}
+ $('#l-fac').innerHTML=k.map(x=>`<option>${esc(x)}</option>`).join('');mach();shared();renderHistory();}
 
 function facInfo(d){
  if(!d){$('#fac-info').innerHTML='';return;}
@@ -52,8 +49,8 @@ function facInfo(d){
   <div class="sub" style="margin-top:8px">
    ${esc(d.address)}　${esc(d.phone)}<br>
    <b>開館時間</b>　${(d.gymHours||[]).map(esc).join('／')}<br>
-   <b>りょうきん</b>　${(d.gymFee||[]).map(esc).join('／')}<br>
-   <b>もちもの</b>　${esc(d.gymBelongings||'—')}</div>
+   <b>料金</b>　${(d.gymFee||[]).map(esc).join('／')}<br>
+   <b>持ち物</b>　${esc(d.gymBelongings||'—')}</div>
   <div class="small" style="margin-top:10px">${esc(d.gymProcedure||'')}<br>${(d.gymNotes||[]).map(esc).join('　')}</div>
  </div>`;}
 
@@ -78,7 +75,7 @@ function mach(){
    <div class="mrow">${figure(m.category||'')}
     <div style="flex:1"><div class="mname">${esc(m.name)}</div>
      ${m.description?`<div class="mdesc">${esc(m.description)}</div>`:''}
-     ${m.videoUrl?`<a class="howto" href="${esc(m.videoUrl)}" target="_blank" rel="noopener">▶ つかい方の動画</a>`:''}
+     ${m.videoUrl?`<a class="howto" href="${esc(m.videoUrl)}" target="_blank" rel="noopener">▶ 使い方の動画</a>`:''}
     </div></div>
    <div class="picker">
      <button class="rnd" onclick="adj(${i},-1)" aria-label="重さをへらす">−</button>
@@ -110,9 +107,26 @@ function save(i){const m=window._ms[i],f=$('#l-fac').value;
  const prev=log.filter(l=>l.f===f&&l.m===m.name).sort((a,b)=>b.t-a.t)[0];
  log.push({f,m:m.name,w,r,t:Date.now()});LS.s('ogt_log',log);
  $('#s'+i).innerHTML=(prev&&w>prev.w)
-  ?`<div class="up">まえより ${(w-prev.w).toFixed(1)}${''}kg ふえました</div>`
+  ?`<div class="up">前回より ${(w-prev.w).toFixed(1)}kg 増えました</div>`
   :`<div class="msg ok">記録しました</div>`;
- $('#log-st').textContent=`これまでに ${log.length} 件をこの端末にほぞんしています。`;}
+ renderHistory();}
+
+/* ---- 記録の履歴（一覧・削除） ---- */
+function renderHistory(){
+ const f=$('#l-fac').value,log=LS.g('ogt_log',[]);
+ const mine=log.map((l,idx)=>({...l,idx})).filter(l=>l.f===f).sort((a,b)=>b.t-a.t);
+ $('#log-st').textContent=`この端末にはこれまで ${log.length} 件の記録があります。`;
+ const box=$('#history');if(!box)return;
+ if(!mine.length){box.innerHTML='<div class="card"><div class="sub">まだこの施設の記録がありません。</div></div>';return;}
+ const fmt=t=>{const d=new Date(t);return `${d.getMonth()+1}月${d.getDate()}日`;};
+ box.innerHTML='<div class="card">'+mine.slice(0,20).map(l=>`
+   <div class="hrow">
+     <div class="hdate">${fmt(l.t)}</div>
+     <div class="hbody"><b>${esc(l.m)}</b>　${l.w}kg${l.r?' × '+l.r+'回':''}</div>
+     <button class="ghost sm" onclick="delLog(${l.idx})" aria-label="この記録を削除">削除</button>
+   </div>`).join('')+'</div>'+
+  (mine.length>20?`<div class="small">ほかに ${mine.length-20} 件あります。</div>`:'');}
+function delLog(idx){const log=LS.g('ogt_log',[]);log.splice(idx,1);LS.s('ogt_log',log);mach();renderHistory();}
 
 /* ---- みんなでふやす ---- */
 async function addM(){
@@ -162,25 +176,50 @@ async function coach(){const b=$('#btn-coach'),st=$('#coach-st'),o=$('#coach-out
  b.disabled=false;b.textContent='きょうは何をすればいい？';}
 
 /* ============ からだ ============ */
-(function(){const B=OGT.body||[];if(!B.length)return;
+function mergedBody(){
+ const base=(OGT.body||[]).map(x=>({...x}));
+ const mine=LS.g('ogt_body_user',[]);
+ const seen=new Map();
+ for(const b of [...base,...mine])seen.set(b.d,b); // 同日はユーザー入力を優先
+ return [...seen.values()].sort((a,b)=>a.d.localeCompare(b.d));}
+
+function renderBody(){
+ const B=mergedBody();
+ const kpiEl=$('#b-kpi'),chEl=$('#b-chart');
+ if(!kpiEl||!chEl||!B.length)return;
  const last=B[B.length-1],first=B[0],sg=x=>x>0?'＋'+x:String(x);
  const dw=(last.w-first.w).toFixed(1),df=(last.f-first.f).toFixed(1),dm=(last.m-first.m).toFixed(1);
- $('#b-kpi').innerHTML=`<div class="card or"><div class="numrow">
+ kpiEl.innerHTML=`<div class="card or"><div class="numrow">
    <div><div class="num">${last.w}<u>kg</u></div><div class="l">体重　${sg(dw)}</div></div>
    <div><div class="num">${last.f}<u>%</u></div><div class="l">体脂肪率　${sg(df)}</div></div>
    <div><div class="num">${last.m}<u>kg</u></div><div class="l">筋肉量　${sg(dm)}</div></div>
   </div></div>`;
  const W=720,H=210,P=34;
  const line=(k,col)=>{const vs=B.map(b=>b[k]),mn=Math.min(...vs),mx=Math.max(...vs);
-  const pts=B.map((b,i)=>[P+i*(W-2*P)/(B.length-1),H-P-((b[k]-mn)/((mx-mn)||1))*(H-2*P)]);
+  const pts=B.map((b,i)=>[P+i*(W-2*P)/((B.length-1)||1),H-P-((b[k]-mn)/((mx-mn)||1))*(H-2*P)]);
   return `<polyline fill="none" stroke="${col}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"
    points="${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}"/>`+
    pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4.5" fill="#fff" stroke="${col}" stroke-width="3"/>`).join('');};
- $('#b-chart').innerHTML=`<div class="card">
+ chEl.innerHTML=`<div class="card">
    <div style="font-size:17px;font-weight:900;margin-bottom:10px">
      <span style="color:#2E8B62">●</span> 筋肉量　　<span style="color:#E8620F">●</span> 体脂肪率</div>
    <svg viewBox="0 0 ${W} ${H}" style="width:100%">${line('m','#2E8B62')}${line('f','#E8620F')}</svg>
-   <div class="small">${first.d} 〜 ${last.d}（${B.length}回測定）</div></div>`;})();
+   <div class="small">${first.d} 〜 ${last.d}（${B.length}回測定）</div></div>`;}
+renderBody();
+
+function addBody(){
+ const w=parseFloat($('#bw').value),fp=parseFloat($('#bf').value),mm=parseFloat($('#bm').value);
+ if(!(w>0)){bodySay('体重を入力してください',0);return;}
+ const d=new Date().toISOString().slice(0,10);
+ const rec={d,w,f:isNaN(fp)?null:fp,m:isNaN(mm)?null:mm};
+ const mine=LS.g('ogt_body_user',[]);
+ const i=mine.findIndex(x=>x.d===d);
+ if(i>=0)mine[i]=rec; else mine.push(rec);
+ LS.s('ogt_body_user',mine);
+ $('#bw').value=$('#bf').value=$('#bm').value='';
+ bodySay('記録しました。',1);
+ renderBody();}
+function bodySay(t,ok){const e=$('#body-st');if(!e)return;e.className='msg '+(ok?'ok':'ng');e.textContent=t;}
 
 /* ============ まとめて登録 ============ */
 let _ai=null;

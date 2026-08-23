@@ -85,10 +85,10 @@ label.cons span{font-size:16px;line-height:1.8}
 label.cons b{font-weight:900}
 .small{font-size:14px;color:var(--ink2);line-height:1.8}
 
-/* からだの図 */
-.fig{width:46px;height:auto;flex:0 0 auto}
-.fig .base{fill:#E5DED4}
-.fig .hit{fill:var(--or)}
+/* 部位アイコン：オレンジ地の丸バッジに白線アイコン */
+.micon{width:52px;height:52px;flex:0 0 auto;border-radius:16px;background:var(--or-l);
+  border:2px solid #F6D3B6;display:flex;align-items:center;justify-content:center}
+.micon svg{display:block}
 
 /* マシンカード */
 .mrow{display:flex;gap:14px;align-items:flex-start}
@@ -141,3 +141,9 @@ nav a.on svg .s{stroke:var(--or)}nav a.on svg .f{fill:var(--or)}
 .msg.ok{color:var(--gr)}.msg.ng{color:var(--pk)}
 pre{background:var(--cream);border:2px solid var(--line);border-radius:14px;padding:14px;
   font-size:15px;line-height:1.8;overflow:auto;font-family:ui-monospace,monospace;color:#4a4540}
+
+/* 記録の履歴 */
+.hrow{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line)}
+.hrow:first-child{border-top:none}
+.hdate{font-size:14px;color:var(--ink2);font-weight:700;min-width:64px}
+.hbody{flex:1;font-size:16px}
