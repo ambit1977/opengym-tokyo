@@ -1,355 +1,209 @@
 <!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>OpenGym Tokyo</title><meta name="theme-color" content="#000">
-<style>
-:root{--cy:#4FC3F7;--gr:#3DDC97;--pk:#FF4FA3;--ln:#222;--mu:#8a8a8a}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{background:#000;color:#fff;font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
- line-height:1.5;padding-bottom:78px}
-header{padding:16px 20px 11px;border-bottom:1px solid var(--ln)}
-h1{font-size:19px;font-weight:800}h1 span{color:var(--cy)}
-.sub{font-size:11px;color:var(--mu);margin-top:2px}
-main{padding:17px 20px;max-width:780px;margin:0 auto}
-.pane{display:none}.pane.on{display:block}
-h2{font-size:13px;color:var(--mu);font-weight:700;letter-spacing:.06em;margin:0 0 12px}
-.lead{font-size:13px;color:var(--mu);margin:0 0 18px}
-.hero{font-size:48px;font-weight:800;line-height:1;letter-spacing:-.03em}
-.hero small{font-size:17px;color:var(--mu);font-weight:700;margin-left:5px}
-.kpi{display:flex;gap:19px;margin-bottom:18px;flex-wrap:wrap}
-.kpi div b{display:block;font-size:26px;font-weight:800;line-height:1.1}
-.kpi div i{font-style:normal;font-size:11px;color:var(--mu)}
-.bar{margin-bottom:12px}
-.bar .t{display:flex;justify-content:space-between;font-size:13px;margin-bottom:5px}
-.bar .t i{font-style:normal;color:var(--mu);font-size:11px}
-.track{height:7px;background:#181818;border-radius:4px;overflow:hidden}
-.fill{height:100%;border-radius:4px}.lo{background:var(--pk)}.mid{background:var(--cy)}.hi{background:var(--gr)}
-select,input,textarea{width:100%;background:#0e0e0e;border:1px solid var(--ln);color:#fff;
- border-radius:9px;padding:11px 12px;margin-bottom:10px;font-family:inherit;font-size:14px}
-textarea{min-height:92px;font-size:12px;line-height:1.6}
-button{background:var(--cy);color:#000;border:0;border-radius:9px;padding:11px 15px;
- font-weight:800;cursor:pointer;font-family:inherit;font-size:14px}
-button.g{background:var(--gr)}button.sm{padding:8px 12px;font-size:12px}
-button.o{background:transparent;color:var(--cy);border:1px solid #2a3a44}
-.card{background:#0c0c0c;border:1px solid var(--ln);border-radius:11px;padding:13px 15px;margin-bottom:10px}
-.card .n{font-weight:800;font-size:15px}
-.card .a{font-size:12px;color:var(--mu);margin-top:3px}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
-.chip{font-size:10px;border:1px solid #2c2c2c;color:#9a9a9a;border-radius:20px;padding:3px 9px;cursor:pointer}
-.chip.ok{border-color:#1e4638;color:var(--gr)}.chip.no{border-color:#4a1e33;color:#a8496f}
-.chip.sel{background:#1b2b34;border-color:var(--cy);color:var(--cy)}
-.mhead{display:flex;align-items:center;gap:8px}
-.mhead .ic{font-size:19px}.mhead .nm{flex:1;font-weight:800;font-size:15px}
-.mhead a{color:var(--cy);font-size:11px;text-decoration:none;border:1px solid #2a3a44;border-radius:6px;padding:3px 7px}
-.desc{font-size:11.5px;color:#7a7a7a;margin:7px 0 10px;line-height:1.6}
-.pick{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
-.stp{background:#151515;color:#fff;border:1px solid var(--ln);width:38px;height:38px;
- border-radius:9px;font-size:18px;font-weight:800;padding:0}
-.val{min-width:74px;text-align:center;font-size:21px;font-weight:800}
-.val u{font-size:11px;color:#666;text-decoration:none;font-weight:600;margin-left:2px}
-.reps{display:flex;gap:5px;align-items:center}
-.reps input{width:62px;margin:0;padding:8px;text-align:center;font-size:15px}
-.rec{font-size:11px;color:var(--mu)}
-.up{color:var(--gr);font-weight:800;font-size:12px}
-.stack{font-size:10px;color:#5a5a5a;margin-top:6px;word-break:break-all;line-height:1.6}
-nav{position:fixed;bottom:0;left:0;right:0;background:#080808;border-top:1px solid var(--ln);
- display:flex;padding:6px 0 max(6px,env(safe-area-inset-bottom))}
-nav a{flex:1;text-align:center;color:#666;text-decoration:none;font-size:9.5px;padding:5px 0;font-weight:700}
-nav a.on{color:var(--cy)}nav a i{display:block;font-size:16px;font-style:normal;margin-bottom:1px}
-.ok{color:var(--gr)}.warn{color:var(--pk)}
-.note{font-size:11px;color:#666;margin-top:12px;line-height:1.7}
-pre{background:#0a0a0a;border:1px solid var(--ln);border-radius:9px;padding:11px;
- font-size:11px;overflow:auto;color:#9fd8ef;line-height:1.55}
-.info{font-size:12.5px;line-height:1.9}
-.info b{color:var(--cy)}
-label.cons{display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#9a9a9a;margin:10px 0}
-label.cons input{width:auto;margin:2px 0 0}
-</style></head><body>
-<header><h1>OpenGym <span>Tokyo</span></h1>
-<div class="sub">そのジムのマシンを知っている、AIトレーナー</div></header>
+<title>オープンジム東京</title><meta name="theme-color" content="#FCF8F3">
+<link rel="stylesheet" href="style.css">
+</head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="fig" viewBox="0 0 44 70">
+  <circle class="base h" cx="22" cy="8" r="7"/>
+  <rect class="base up" x="12" y="18" width="20" height="16" rx="6"/>
+  <rect class="base co" x="14" y="34" width="16" height="11" rx="4"/>
+  <rect class="base ar" x="2"  y="19" width="7" height="22" rx="3.5"/>
+  <rect class="base ar" x="35" y="19" width="7" height="22" rx="3.5"/>
+  <rect class="base lo" x="14" y="45" width="7" height="23" rx="3.5"/>
+  <rect class="base lo" x="23" y="45" width="7" height="23" rx="3.5"/>
+</symbol>
+<symbol id="i-gym" viewBox="0 0 28 28"><g fill="none" stroke="#6B6560" stroke-width="2.4" stroke-linecap="round" class="s">
+  <path d="M4 11v6M8 8v12M20 8v12M24 11v6M8 14h12"/></g></symbol>
+<symbol id="i-search" viewBox="0 0 28 28"><g fill="none" stroke="#6B6560" stroke-width="2.4" stroke-linecap="round" class="s">
+  <circle cx="12.5" cy="12.5" r="7.5"/><path d="M18 18l5 5"/></g></symbol>
+<symbol id="i-note" viewBox="0 0 28 28"><g fill="none" stroke="#6B6560" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="s">
+  <rect x="5" y="4" width="18" height="20" rx="3"/><path d="M9 10h10M9 14h10M9 18h6"/></g></symbol>
+<symbol id="i-body" viewBox="0 0 28 28"><g fill="none" stroke="#6B6560" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="s">
+  <circle cx="14" cy="7" r="3.4"/><path d="M14 11v8M14 19l-4 6M14 19l4 6M8 14h12"/></g></symbol>
+<symbol id="i-people" viewBox="0 0 28 28"><g fill="none" stroke="#6B6560" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" class="s">
+  <circle cx="10" cy="9" r="3.6"/><circle cx="20" cy="10.5" r="3"/>
+  <path d="M4 22c0-3.6 2.7-6 6-6s6 2.4 6 6M18 22c0-2.8 1.6-5 4-5.4"/></g></symbol>
+</defs></svg>
+
+<header><div class="hwrap">
+  <svg width="34" height="34"><use href="#i-gym"/></svg>
+  <h1>オープンジム東京<small>まちのジムを、つかいやすく</small></h1>
+</div></header>
 <main>
 
-<section id="p-data" class="pane on">
-  <h2>オープンデータで分かること</h2>
-  <div class="kpi">
-    <div><b id="k-mun">–</b><i>自治体</i></div>
-    <div><b id="k-fac">–</b><i>スポーツ施設</i></div>
-    <div><b class="ok" id="k-gym">–</b><i>トレーニング室あり</i></div>
-  </div>
-  <div id="bars"></div>
-  <div class="note" id="src"></div>
-  <div class="card" style="border-color:#4a1e33;margin-top:20px">
-    <div class="n warn">オープンデータで分からないこと</div>
-    <div class="info" style="margin-top:8px">
-      どんなマシンが置いてあるか　→ <b class="warn">列が存在しない（0/75施設）</b><br>
-      実機で選べる重量　→ <b class="warn">同上</b>
+<!-- ============ まちのジム ============ -->
+<section id="p-home" class="pane on">
+  <div style="text-align:center;margin-bottom:20px"><svg viewBox="0 0 340 150" style="width:100%;max-width:340px;height:auto" role="img" aria-label="ジムでトレーニングする人のイラスト">
+  <ellipse cx="170" cy="136" rx="126" ry="9" fill="#F1ECE5"/>
+  <!-- 人 -->
+  <circle cx="170" cy="40" r="17" fill="#33302C"/>
+  <path d="M170 58 v40" stroke="#33302C" stroke-width="11" stroke-linecap="round"/>
+  <path d="M170 96 l-17 32M170 96 l17 32" stroke="#33302C" stroke-width="11" stroke-linecap="round"/>
+  <path d="M170 70 l-38 0M170 70 l38 0" stroke="#33302C" stroke-width="11" stroke-linecap="round"/>
+  <!-- バーベル -->
+  <rect x="96" y="62" width="148" height="8" rx="4" fill="#B9B1A7"/>
+  <rect x="80"  y="50" width="20" height="32" rx="6" fill="#E8620F"/>
+  <rect x="240" y="50" width="20" height="32" rx="6" fill="#E8620F"/>
+  <rect x="62"  y="56" width="14" height="20" rx="5" fill="#F4A66A"/>
+  <rect x="264" y="56" width="14" height="20" rx="5" fill="#F4A66A"/>
+  <!-- 効果線 -->
+  <g stroke="#2E8B62" stroke-width="4" stroke-linecap="round">
+    <path d="M46 30 l-12 -9M300 30 l12 -9M40 96 l-13 7M304 96 l13 7"/>
+  </g>
+</svg>
+</div>
+  <h2>まちには、<span class="em">やすいジム</span>があります。</h2>
+  <p class="lead">区や市がやっているジムです。1時間 100円くらい。<br>
+  お住まいの区の施設なら、どなたでも使えます。</p>
+
+  <div class="card or">
+    <div class="numrow">
+      <div><div class="num" id="k-gym">–</div><div class="l">トレーニング室のある施設</div></div>
+      <div><div class="num" id="k-mun">–</div><div class="l">区・市</div></div>
     </div>
-    <div class="note">現地で1台ずつ確認するしかない。だから利用者が少しずつ足していく。</div>
+    <div class="sub">東京都と各区市が公開しているデータから数えました。</div>
   </div>
+
+  <h3>ただ、こまったことがあります</h3>
+  <div class="card">
+    <div class="ttl">ジムの「中のこと」が、どこにも書いてありません。</div>
+    <div class="sub" style="margin-top:10px">
+      どんなマシンがあるか。何キロから何キロまで選べるか。<br>
+      公開されている情報には、その<b>らん（項目）そのものがありません</b>。</div>
+    <div style="margin-top:18px">
+      <svg viewBox="0 0 320 96" style="width:100%;max-width:320px" role="img" aria-label="表に空欄が並ぶ図">
+        <rect x="2" y="2" width="316" height="92" rx="12" fill="#fff" stroke="#E9E2D9" stroke-width="2"/>
+        <rect x="2" y="2" width="316" height="26" rx="12" fill="#FCF8F3"/>
+        <text x="16" y="20" font-size="13" fill="#6B6560" font-weight="700">しせつ名</text>
+        <text x="120" y="20" font-size="13" fill="#6B6560" font-weight="700">じゅうしょ</text>
+        <text x="230" y="20" font-size="13" fill="#C2185B" font-weight="700">マシン</text>
+        <g font-size="13" fill="#33302C">
+          <text x="16" y="48">◯◯体育館</text><text x="120" y="48">◯◯1-2-3</text>
+          <text x="16" y="72">△△区民館</text><text x="120" y="72">△△4-5-6</text>
+        </g>
+        <g fill="#F7ECEF" stroke="#E7C3CE" stroke-width="1.5">
+          <rect x="226" y="36" width="80" height="18" rx="6"/><rect x="226" y="60" width="80" height="18" rx="6"/>
+        </g>
+        <g font-size="12" fill="#C2185B" font-weight="700" text-anchor="middle">
+          <text x="266" y="49">くうらん</text><text x="266" y="73">くうらん</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <h3>だから、みんなで書きたします</h3>
+  <div class="card gr">
+    <svg viewBox="0 0 340 118" style="width:100%;max-width:340px" role="img" aria-label="3つの手順の図">
+      <g font-family="inherit" text-anchor="middle">
+        <circle cx="46" cy="40" r="26" fill="#fff" stroke="#2E8B62" stroke-width="3"/>
+        <text x="46" y="48" font-size="24" font-weight="900" fill="#2E8B62">1</text>
+        <text x="46" y="86" font-size="14" font-weight="700" fill="#33302C">じぶんの</text>
+        <text x="46" y="104" font-size="14" font-weight="700" fill="#33302C">きろくを書く</text>
+        <path d="M80 40 h30" stroke="#2E8B62" stroke-width="3" stroke-linecap="round"/>
+        <path d="M104 34 l8 6 -8 6" fill="none" stroke="#2E8B62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="146" cy="40" r="26" fill="#fff" stroke="#2E8B62" stroke-width="3"/>
+        <text x="146" y="48" font-size="24" font-weight="900" fill="#2E8B62">2</text>
+        <text x="146" y="86" font-size="14" font-weight="700" fill="#33302C">よければ</text>
+        <text x="146" y="104" font-size="14" font-weight="700" fill="#33302C">みんなに提供</text>
+        <path d="M180 40 h30" stroke="#2E8B62" stroke-width="3" stroke-linecap="round"/>
+        <path d="M204 34 l8 6 -8 6" fill="none" stroke="#2E8B62" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="246" cy="40" r="26" fill="#fff" stroke="#2E8B62" stroke-width="3"/>
+        <text x="246" y="48" font-size="24" font-weight="900" fill="#2E8B62">3</text>
+        <text x="246" y="86" font-size="14" font-weight="700" fill="#33302C">つぎの人が</text>
+        <text x="246" y="104" font-size="14" font-weight="700" fill="#33302C">すぐ使える</text>
+      </g>
+    </svg>
+    <div class="sub" style="margin-top:8px">むずかしい作業はありません。<br>
+    自分の記録をつけていくだけで、少しずつそろっていきます。</div>
+  </div>
+
+  <h3>いま公開されている情報</h3>
+  <div id="bars"></div>
+  <div class="small" id="src"></div>
 </section>
 
+<!-- ============ さがす ============ -->
 <section id="p-find" class="pane">
-  <h2>トレーニング室のある公営施設</h2>
+  <h2>ジムを<span class="em">さがす</span></h2>
+  <p class="lead">トレーニング室のある施設です。お住まいの区を選んでください。</p>
+  <label class="f" for="f-mun">区・市をえらぶ</label>
   <select id="f-mun"></select>
   <div id="list"></div>
 </section>
 
+<!-- ============ きろく ============ -->
 <section id="p-log" class="pane">
-  <h2>きろく</h2>
+  <h2>きょうの<span class="em">きろく</span></h2>
+  <label class="f" for="l-fac">通っているジム</label>
   <select id="l-fac"></select>
   <div id="fac-info"></div>
+  <h3>きたえる場所でえらぶ</h3>
   <div class="chips" id="cats"></div>
   <div id="machines"></div>
 
-  <div class="card" style="border-style:dashed">
-    <div class="n" style="font-size:14px;margin-bottom:8px">＋ このジムにあったマシンを足す</div>
-    <input id="nm" placeholder="マシン名（例：アブドミナル）">
-    <input id="wl" placeholder="選べる重量（例：2 3.5 5 6.5 8 …）スペース区切り">
+  <h3>マシンをふやす</h3>
+  <div class="card cream">
+    <div class="sub" style="margin-bottom:14px">
+      一覧にないマシンがあったら、教えてください。<br>次に来た人が使えるようになります。</div>
+    <label class="f" for="nm">マシンの名前</label>
+    <input id="nm" placeholder="れい：アブドミナル">
+    <label class="f" for="wl">えらべる重さ（わかる範囲で）</label>
+    <input id="wl" placeholder="れい：2 3.5 5 6.5 8">
     <label class="cons"><input type="checkbox" id="cons" checked>
-      <span>このマシン情報を<b style="color:#fff">この施設の共有データ</b>として提供する<br>
-      <span style="color:#666">※あなたの記録内容（重量・回数・日付）は共有されません</span></span></label>
-    <button class="sm" onclick="addM()">追加する</button>
-    <div class="note" id="add-st"></div>
+      <span><b>このマシンのことを、みんなに教えてもよい</b><br>
+      <span class="small">おくるのは「マシンの名前」と「えらべる重さ」だけです。<br>
+      あなたが何キロ上げたかは、おくりません。</span></span></label>
+    <button onclick="addM()">この内容でふやす</button>
+    <div class="msg" id="add-st"></div>
   </div>
 
-  <div class="card" id="shared-box" style="display:none;border-color:#2a3a44">
-    <div class="n" style="font-size:14px;color:var(--cy)">みんなが整えた、この施設のデータ</div>
-    <div id="shared-body" class="rec" style="margin-top:8px"></div>
-    <button class="sm o" style="margin-top:10px" onclick="pull()">取り込んで使う</button>
+  <div class="card bl" id="shared-box" style="display:none">
+    <div class="ttl">みんなが教えてくれた、このジムのマシン</div>
+    <div id="shared-body" style="margin-top:10px"></div>
+    <button class="ghost sm" style="margin-top:14px" onclick="pull()">まとめてつかう</button>
   </div>
 
-  <button class="g" id="btn-coach" style="margin-top:16px" onclick="coach()">AIトレーナーに相談する</button>
-  <div class="note" id="coach-st"></div>
-  <div id="coach-out" class="card" style="display:none;border-color:#1e4638;white-space:pre-wrap;font-size:13px;line-height:1.85"></div>
-  <div class="note" id="log-st"></div>
+  <h3>AIトレーナーにきく</h3>
+  <div class="card">
+    <div class="sub">このジムにあるマシンと、あなたの記録だけを見て答えます。</div>
+    <button class="green" id="btn-coach" style="margin-top:14px" onclick="coach()">きょうは何をすればいい？</button>
+    <div class="msg" id="coach-st"></div>
+    <div id="coach-out" class="card gr" style="display:none;white-space:pre-wrap;margin-top:14px;font-size:18px"></div>
+  </div>
+  <div class="msg" id="log-st"></div>
 </section>
 
+<!-- ============ からだ ============ -->
 <section id="p-body" class="pane">
-  <h2>からだ</h2>
-  <div class="lead">体組成計の記録。トレーニングの成果はここに出る。</div>
-  <div class="kpi" id="b-kpi"></div>
+  <h2>からだの<span class="em">かわり方</span></h2>
+  <p class="lead">体組成計ではかった記録です。つづけた結果は、ここに出ます。</p>
+  <div id="b-kpi"></div>
   <div id="b-chart"></div>
-  <div class="note">サンプルは実際の測定記録（2026/7/8〜8/21・21回）。端末内にのみ保存される。</div>
+  <div class="small">この記録はこの端末の中だけに保存され、どこにもおくられません。</div>
 </section>
 
+<!-- ============ まとめて登録（運営者向け） ============ -->
 <section id="p-conf" class="pane">
-  <h2>まとめて登録する — <span class="warn">JSONを書かせない</span></h2>
-  <div class="lead">運営者向け。設備を日本語で書けば Workers AI が構造化する。</div>
+  <h2>まとめて<span class="em">とうろく</span></h2>
+  <p class="lead">ジムの方むけ。マシンのことを、ふつうの日本語で書いてください。<br>
+  AIが、アプリで使える形にととのえます。</p>
+  <label class="f" for="say">マシンのせつめい</label>
   <textarea id="say">旭町南地区区民館。チェストプレスは6から106まで5キロ刻み。レッグプレスは8から208まで10キロ刻み。</textarea>
-  <button id="btn-ai" onclick="ai()">AIで構造化する</button>
-  <div class="note" id="ai-st"></div>
-  <pre id="ai-out" style="display:none"></pre>
-  <div id="ai-imp" style="display:none;margin-top:10px"><button class="g" onclick="impAI()">この内容で取り込む</button></div>
+  <button id="btn-ai" onclick="ai()">AIにととのえてもらう</button>
+  <div class="msg" id="ai-st"></div>
+  <pre id="ai-out" style="display:none;margin-top:14px"></pre>
+  <div id="ai-imp" style="display:none"><button class="green" style="margin-top:12px" onclick="impAI()">この内容でとうろく</button></div>
 </section>
 
 </main>
 <nav>
-  <a href="#" class="on" data-p="data"><i>◱</i>データ</a>
-  <a href="#" data-p="find"><i>◎</i>さがす</a>
-  <a href="#" data-p="log"><i>▲</i>きろく</a>
-  <a href="#" data-p="body"><i>◇</i>からだ</a>
-  <a href="#" data-p="conf"><i>✦</i>登録</a>
-  <a href="community.html"><i>❋</i>みんな</a>
+  <a href="#" class="on" data-p="home"><svg width="28" height="28"><use href="#i-gym"/></svg>まちのジム</a>
+  <a href="#" data-p="find"><svg width="28" height="28"><use href="#i-search"/></svg>さがす</a>
+  <a href="#" data-p="log"><svg width="28" height="28"><use href="#i-note"/></svg>きろく</a>
+  <a href="#" data-p="body"><svg width="28" height="28"><use href="#i-body"/></svg>からだ</a>
+  <a href="community.html"><svg width="28" height="28"><use href="#i-people"/></svg>なかま</a>
 </nav>
 <script src="data.js"></script>
-<script>
-const $=s=>document.querySelector(s), C=OGT.coverage, F=OGT.facilities, D=OGT.detail||{};
-const LS={g:(k,d)=>JSON.parse(localStorage.getItem(k)||JSON.stringify(d)),s:(k,v)=>localStorage.setItem(k,JSON.stringify(v))};
-
-/* ---- データ ---- */
-$('#k-mun').textContent=C.municipalities;$('#k-fac').textContent=C.facilities;$('#k-gym').textContent=C.gyms;
-const ORD=['所在地_連結表記','電話番号','開始時間','URL','更衣室','シャワー室','車椅子可','フリーWi-Fi','緯度'];
-$('#bars').innerHTML=ORD.filter(k=>C.coverage[k]).map(k=>{const v=C.coverage[k];
- const c=v.pct<35?'lo':v.pct<70?'mid':'hi';
- return `<div class="bar"><div class="t"><b>${k.replace('_連結表記','')}</b><i>${v.pct}%　${v.filled}/${v.total}</i></div>
- <div class="track"><div class="fill ${c}" style="width:${v.pct}%"></div></div></div>`}).join('');
-$('#src').innerHTML=`出典：${C.source}／${C.license}<br>${C.municipalities}自治体・${C.facilities}施設の公開CSVを全カラム検査した実測値`;
-
-/* ---- さがす ---- */
-const muns=[...new Set(F.map(f=>f.自治体))].sort();
-$('#f-mun').innerHTML=`<option value="">すべての自治体（${F.length}施設）</option>`+muns.map(m=>`<option>${m}</option>`).join('');
-const flag=(v,l)=>`<span class="chip ${v?'ok':'no'}">${l}${v?'':' 不明'}</span>`;
-function draw(){const m=$('#f-mun').value;
- $('#list').innerHTML=F.filter(f=>!m||f.自治体===m).map(f=>`<div class="card">
-  <div class="n">${f.名称}</div><div class="a">${f.自治体}　${f['所在地_連結表記']||''}</div>
-  <div class="chips">${flag(f.開始時間,'開館時間')}${flag(f.緯度,'地図')}${flag(f.更衣室,'更衣室')}${flag(f['フリーWi-Fi'],'Wi-Fi')}${flag(f.車椅子可,'車椅子')}</div>
- </div>`).join('');}
-$('#f-mun').onchange=draw;draw();
-
-/* ---- きろく ---- */
-let CAT='';
-function confAll(){const c=LS.g('ogt_conf',{});
- for(const id in D){const d=D[id];if(!c[d.name])c[d.name]=d.machines;}
- LS.s('ogt_conf',c);return c;}
-function detailOf(name){for(const id in D)if(D[id].name===name)return D[id];return null;}
-function facs(){const c=confAll(),k=Object.keys(c);
- $('#l-fac').innerHTML=k.map(x=>`<option>${x}</option>`).join('');mach();shared();}
-
-function facInfo(d){
- if(!d){$('#fac-info').innerHTML='';return;}
- $('#fac-info').innerHTML=`<div class="card"><div class="info">
-  <b>${d.address}</b>　${d.phone}<br>
-  利用時間：${(d.gymHours||[]).join(' / ')}<br>
-  料金：${(d.gymFee||[]).join(' / ')}<br>
-  持ち物：${d.gymBelongings||'—'}<br>
-  ${d.gymProcedure||''}</div>
-  <div class="note">${(d.gymNotes||[]).join('　')}</div></div>`;}
-
-function mach(){
- const conf=confAll(),f=$('#l-fac').value,d=detailOf(f);
- facInfo(d);
- let ms=conf[f]||[];
- const cats=d&&d.categories;
- $('#cats').innerHTML=cats?['',...Object.keys(cats)].map(k=>
-   `<span class="chip ${CAT===k?'sel':''}" onclick="CAT='${k}';mach()">${k?cats[k].icon+' '+cats[k].label:'すべて'}</span>`).join(''):'';
- if(CAT)ms=ms.filter(m=>m.category===CAT);
- if(!ms.length){$('#machines').innerHTML='<div class="note">マシンがありません。下から足せます。</div>';return;}
- const log=LS.g('ogt_log',[]);
- $('#machines').innerHTML=ms.map((m,i)=>{
-  const past=log.filter(l=>l.f===f&&l.m===m.name).sort((a,b)=>b.t-a.t),last=past[0];
-  const days=last?Math.floor((Date.now()-last.t)/864e5):null;
-  const ws=m.weights&&m.weights.length?m.weights:null;
-  const cur=last?last.w:(ws?ws[0]:(m.min||0));
-  const ic=cats&&m.category&&cats[m.category]?cats[m.category].icon:'●';
-  const vid=m.videoUrl?`<a href="${m.videoUrl}" target="_blank" rel="noopener">使い方 ▷</a>`:'';
-  const unit=(m.fields&&m.fields[0]&&m.fields[0].unit)||'kg';
-  const lbl=(m.fields&&m.fields[0]&&m.fields[0].label)||'重量';
-  return `<div class="card">
-   <div class="mhead"><span class="ic">${ic}</span><span class="nm">${m.name}</span>${vid}</div>
-   ${m.description?`<div class="desc">${m.description}</div>`:''}
-   <div class="pick">
-     <button class="stp" onclick="adj(${i},-1)">−</button>
-     <span class="val" id="w${i}">${cur}<u>${unit}</u></span>
-     <button class="stp" onclick="adj(${i},1)">＋</button>
-     ${m.hasSets!==false?`<span class="reps">× <input type="number" id="r${i}" value="${last&&last.r||10}" min="1">回</span>`:''}
-     <div style="flex:1"></div>
-     <button class="sm g" onclick="save(${i})">記録</button>
-   </div>
-   <div class="rec">${last?`前回 ${last.w}${unit}${last.r?' × '+last.r+'回':''}・${days===0?'今日':days+'日前'}`:'記録なし'}</div>
-   ${ws?`<div class="stack">選べる${lbl}：${ws.join(' / ')}</div>`:''}
-   <div id="s${i}" class="rec"></div></div>`}).join('');
- window._ms=ms;}
-
-function adj(i,d){const m=window._ms[i],e=$('#w'+i);
- const unit=(m.fields&&m.fields[0]&&m.fields[0].unit)||'kg';
- const cur=parseFloat(e.textContent);
- if(m.weights&&m.weights.length){
-   let idx=m.weights.findIndex(x=>Math.abs(x-cur)<1e-6);
-   if(idx<0)idx=0; idx=Math.max(0,Math.min(m.weights.length-1,idx+d));
-   e.innerHTML=m.weights[idx]+`<u>${unit}</u>`;
- }else{
-   let v=cur+d*(m.step||2.5); v=Math.max(m.min||0,v);
-   e.innerHTML=(Number.isInteger(v)?v:v.toFixed(1))+`<u>${unit}</u>`;}}
-
-function save(i){const m=window._ms[i],f=$('#l-fac').value;
- const w=parseFloat($('#w'+i).textContent);
- const rEl=$('#r'+i), r=rEl?parseInt(rEl.value)||0:0;
- const log=LS.g('ogt_log',[]);
- const prev=log.filter(l=>l.f===f&&l.m===m.name).sort((a,b)=>b.t-a.t)[0];
- log.push({f,m:m.name,w,r,t:Date.now()});LS.s('ogt_log',log);
- $('#s'+i).innerHTML=(prev&&w>prev.w)?`<span class="up">UP↑ 前回 ${prev.w} → ${w}</span>`:`保存しました`;
- $('#log-st').textContent=`累計 ${log.length} 件を端末内に保存（オフライン動作）`;}
-
-/* ---- CGM 共有 ---- */
-async function addM(){
- const f=$('#l-fac').value,nm=$('#nm').value.trim();
- if(!nm){$('#add-st').innerHTML='<span class="warn">マシン名を入れてください</span>';return;}
- const ws=$('#wl').value.trim().split(/[\s,]+/).map(Number).filter(x=>!isNaN(x)&&x>=0);
- const m={name:nm,weights:ws.length?ws:undefined,min:ws[0]||0,max:ws[ws.length-1]||0,
-          step:ws.length>1?+(ws[1]-ws[0]).toFixed(2):2.5,hasSets:true};
- const conf=confAll();conf[f]=[...(conf[f]||[]),m];LS.s('ogt_conf',conf);
- $('#nm').value=$('#wl').value='';CAT='';mach();
- if($('#cons').checked){
-  try{const r=await fetch('/api/share',{method:'POST',headers:{'content-type':'application/json'},
-    body:JSON.stringify({facility:f,machines:[m],consent:true})});
-   const j=await r.json();
-   $('#add-st').innerHTML=j.ok?`<span class="ok">追加し、共有しました。この施設は延べ ${j.contributions} 人の入力で ${j.machines.length} 台が登録されています。</span>`:'<span class="warn">'+j.error+'</span>';
-   shared();}catch(e){$('#add-st').innerHTML='<span class="warn">共有に失敗（記録には追加済み）</span>';}
- }else{$('#add-st').innerHTML='<span class="ok">自分の記録にだけ追加しました。</span>';}}
-
-let _shared=null;
-async function shared(){const f=$('#l-fac').value;if(!f)return;
- try{const j=await (await fetch('/api/share?facility='+encodeURIComponent(f))).json();
-  if(!j.ok||!j.machines||!j.machines.length){$('#shared-box').style.display='none';return;}
-  _shared=j.machines;
-  $('#shared-body').innerHTML=`延べ <b style="color:#fff">${j.contributions}</b> 人の入力から <b style="color:#fff">${j.machines.length}</b> 台<br>`+
-   j.machines.map(m=>`・${m.name}<span style="color:#666"> ${m.n}件</span>`).join('<br>');
-  $('#shared-box').style.display='block';}catch(e){}}
-function pull(){if(!_shared)return;const f=$('#l-fac').value,conf=confAll();
- const names=new Set((conf[f]||[]).map(m=>m.name));
- conf[f]=[...(conf[f]||[]),..._shared.filter(m=>!names.has(m.name))];
- LS.s('ogt_conf',conf);CAT='';mach();
- $('#add-st').innerHTML='<span class="ok">共有データを取り込みました。設定作業ゼロで使えます。</span>';}
-
-/* ---- AIトレーナー ---- */
-async function coach(){const b=$('#btn-coach'),st=$('#coach-st'),o=$('#coach-out');
- b.disabled=true;b.textContent='考えています…';st.textContent='';o.style.display='none';
- try{const f=$('#l-fac').value,conf=confAll(),ms=(conf[f]||[]).map(m=>({
-    name:m.name,min:m.weights?m.weights[0]:m.min,max:m.weights?m.weights[m.weights.length-1]:m.max,
-    step:m.step,weights:m.weights}));
-  const log=LS.g('ogt_log',[]).filter(l=>l.f===f).slice(-12)
-    .map(l=>({m:l.m,w:l.w,d:Math.floor((Date.now()-l.t)/864e5)}));
-  const r=await fetch('/api/coach',{method:'POST',headers:{'content-type':'application/json'},
-    body:JSON.stringify({facility:f,machines:ms,history:log})});
-  const j=await r.json();if(!j.ok)throw new Error(j.error);
-  o.textContent=j.advice;o.style.display='block';
-  st.innerHTML=`<span class="ok">この施設にあるマシンだけを根拠に生成（${j.model}）</span>`;
- }catch(e){st.innerHTML='<span class="warn">'+e.message+'</span>';}
- b.disabled=false;b.textContent='AIトレーナーに相談する';}
-
-/* ---- からだ ---- */
-(function(){const B=OGT.body||[];if(!B.length)return;
- const last=B[B.length-1],first=B[0];
- const dw=(last.w-first.w).toFixed(1),df=(last.f-first.f).toFixed(1),dm=(last.m-first.m).toFixed(1);
- const sign=x=>x>0?'+'+x:x;
- $('#b-kpi').innerHTML=`
-  <div><b>${last.w}<span style="font-size:13px;color:#666">kg</span></b><i>体重 <span class="${dw<=0?'ok':'warn'}">${sign(dw)}</span></i></div>
-  <div><b class="ok">${last.f}<span style="font-size:13px;color:#666">%</span></b><i>体脂肪率 <span class="${df<=0?'ok':'warn'}">${sign(df)}</span></i></div>
-  <div><b class="ok">${last.m}<span style="font-size:13px;color:#666">kg</span></b><i>筋肉量 <span class="${dm>=0?'ok':'warn'}">${sign(dm)}</span></i></div>`;
- const W=740,H=190,P=26;
- const line=(key,col)=>{const vs=B.map(b=>b[key]);const mn=Math.min(...vs),mx=Math.max(...vs);
-  const pts=B.map((b,i)=>[P+i*(W-2*P)/(B.length-1),H-P-((b[key]-mn)/((mx-mn)||1))*(H-2*P)]);
-  return `<polyline fill="none" stroke="${col}" stroke-width="2.5" stroke-linejoin="round"
-   points="${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}"/>`+
-   pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="2.6" fill="${col}"/>`).join('');};
- $('#b-chart').innerHTML=`<div class="card">
-  <div class="rec" style="margin-bottom:6px"><span class="ok">■</span> 筋肉量　<span style="color:#FF4FA3">■</span> 体脂肪率</div>
-  <svg viewBox="0 0 ${W} ${H}" style="width:100%">${line('m','#3DDC97')}${line('f','#FF4FA3')}</svg>
-  <div class="rec">${first.d} 〜 ${last.d}（${B.length}回）</div></div>`;})();
-
-/* ---- 一括登録 ---- */
-let _ai=null;
-async function ai(){const b=$('#btn-ai'),st=$('#ai-st');
- b.disabled=true;b.textContent='構造化しています…';st.textContent='';
- $('#ai-out').style.display='none';$('#ai-imp').style.display='none';
- try{const r=await fetch('/api/parse',{method:'POST',headers:{'content-type':'application/json'},
-   body:JSON.stringify({text:$('#say').value})});
-  const j=await r.json();if(!j.ok)throw new Error(j.error);
-  _ai=j.data;$('#ai-out').textContent=JSON.stringify(j.data,null,1);
-  $('#ai-out').style.display='block';$('#ai-imp').style.display='block';
-  st.innerHTML=`<span class="ok">Workers AI が構造化しました（${j.model}）</span>`;
- }catch(e){st.innerHTML='<span class="warn">'+e.message+'</span>';}
- b.disabled=false;b.textContent='AIで構造化する';}
-function impAI(){if(!_ai)return;const all=confAll();
- all[_ai.facility||'名称未設定']=_ai.machines;LS.s('ogt_conf',all);
- $('#ai-st').innerHTML=`<span class="ok">取り込みました：${_ai.facility}／マシン${_ai.machines.length}件</span>`;facs();}
-
-/* ---- nav ---- */
-function go(id){document.querySelectorAll('nav a').forEach(x=>x.classList.toggle('on',x.dataset.p===id));
- document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
- const el=$('#p-'+id);if(el)el.classList.add('on');}
-document.querySelectorAll('nav a').forEach(a=>a.onclick=e=>{e.preventDefault();
- go(a.dataset.p);location.hash=a.dataset.p;window.scrollTo(0,0);});
-
-/* デモ用の記録 */
-(function(){if(localStorage.getItem('ogt_log'))return;const d=864e5,f='旭町南地区区民館';
- LS.s('ogt_log',[{f,m:'チェストプレス',w:26,r:10,t:Date.now()-6*d},
-  {f,m:'ラットプルダウン',w:32,r:10,t:Date.now()-6*d},
-  {f,m:'レッグプレス',w:68,r:12,t:Date.now()-3*d},
-  {f,m:'チェストプレス',w:31,r:10,t:Date.now()-3*d}]);})();
-
-facs();
-(function(){const h=(location.hash||'').replace('#','');
- if(h==='coach'){go('log');setTimeout(()=>coach(),500);return;}
- if(h==='conf-demo'){go('conf');setTimeout(()=>ai(),300);return;}
- if(['data','find','log','body','conf'].includes(h))go(h);})();
-</script></body></html>
+<script src="app.js"></script>
+</body></html>
