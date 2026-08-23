@@ -84,13 +84,22 @@ pre{background:#0a0a0a;border:1px solid var(--ln);border-radius:9px;padding:11px
 </section>
 
 <section id="p-conf" class="pane">
-  <h2>施設設定をつくる（JSONを書かせない）</h2>
-  <div class="lead">生成AIにこのまま貼るだけ。返ってきたJSONを下に貼れば取り込まれる。</div>
-  <pre id="prompt"></pre>
-  <button class="sm o" onclick="cp()">プロンプトをコピー</button>
-  <div style="height:14px"></div>
-  <textarea id="json" placeholder='ここにAIが返したJSONを貼る'></textarea>
-  <button class="g" onclick="imp()">取り込む</button>
+  <h2>施設設定をつくる — <span style="color:var(--pk)">JSONを書かせない</span></h2>
+  <div class="lead">設備を、ふつうの日本語で書くだけ。Cloudflare Workers AI が構造化する。</div>
+  <textarea id="say" placeholder="例）光が丘体育館。ラットプルは10から80まで5キロ刻み。レッグプレスは20から150まで10キロ刻み。チェストプレスは5から60まで2.5キロ刻み。">光が丘体育館。ラットプルは10から80まで5キロ刻み。レッグプレスは20から150まで10キロ刻み。チェストプレスは5から60まで2.5キロ刻み。</textarea>
+  <button id="btn-ai" onclick="ai()">AIで構造化する</button>
+  <div class="note" id="ai-st"></div>
+  <pre id="ai-out" style="display:none"></pre>
+  <div id="ai-imp" style="display:none;margin-top:10px">
+    <button class="g" onclick="impAI()">この内容で取り込む</button></div>
+  <details style="margin-top:26px">
+    <summary style="font-size:12px;color:#666;cursor:pointer">オフラインの場合：プロンプトを手動で使う</summary>
+    <pre id="prompt" style="margin-top:10px"></pre>
+    <button class="sm o" onclick="cp()">プロンプトをコピー</button>
+    <div style="height:10px"></div>
+    <textarea id="json" placeholder='AIが返したJSONを貼る'></textarea>
+    <button class="sm g" onclick="imp()">取り込む</button>
+  </details>
   <div class="note" id="conf-st"></div>
 </section>
 
@@ -149,6 +158,25 @@ const P=`あなたは公営ジムの設備をJSONに整理する担当です。
 レッグプレスは20から150まで10キロ刻み。チェストプレスは5から60まで2.5キロ刻み。`;
 $('#prompt').textContent=P;
 function cp(){navigator.clipboard?.writeText(P);$('#conf-st').textContent='コピーしました。生成AIに貼ってください。';}
+let _ai=null;
+async function ai(){const b=$('#btn-ai'),st=$('#ai-st');
+  b.disabled=true;b.textContent='構造化しています…';st.textContent='';
+  $('#ai-out').style.display='none';$('#ai-imp').style.display='none';
+  try{
+    const r=await fetch('/api/parse',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({text:$('#say').value})});
+    const j=await r.json();
+    if(!j.ok)throw new Error(j.error+(j.detail?'（'+j.detail+'）':''));
+    _ai=j.data;
+    $('#ai-out').textContent=JSON.stringify(j.data,null,1);
+    $('#ai-out').style.display='block';$('#ai-imp').style.display='block';
+    st.innerHTML=`<span class="ok">Workers AI が構造化しました（${j.model}）</span>`;
+  }catch(e){st.innerHTML='<span class="warn">'+e.message+'</span><br>下の「オフラインの場合」から手動でも取り込めます。';}
+  b.disabled=false;b.textContent='AIで構造化する';}
+function impAI(){if(!_ai)return;
+  const all=LS.g('ogt_conf',{});all[_ai.facility||'名称未設定']=_ai.machines;LS.s('ogt_conf',all);
+  $('#ai-st').innerHTML=`<span class="ok">取り込みました：${_ai.facility}／マシン${_ai.machines.length}件。「きろく」で使えます。</span>`;
+  facs();}
 function imp(){try{const o=JSON.parse($('#json').value);
   if(!o.facility||!Array.isArray(o.machines))throw 0;
   const all=LS.g('ogt_conf',{}); all[o.facility]=o.machines; LS.s('ogt_conf',all);
@@ -195,7 +223,9 @@ $('#l-fac').onchange=mach; facs();
 function go(id){document.querySelectorAll('nav a').forEach(x=>x.classList.toggle('on',x.dataset.p===id));
  document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
  const el=$('#p-'+id); if(el)el.classList.add('on');}
-(function(){const h=(location.hash||'').replace('#','');if(['data','find','conf','log'].includes(h))go(h);})();
+(function(){let h=(location.hash||'').replace('#','');
+ if(h==='conf-demo'){go('conf');setTimeout(()=>ai(),300);return;}
+ if(['data','find','conf','log'].includes(h))go(h);})();
 document.querySelectorAll('nav a').forEach(a=>a.onclick=e=>{e.preventDefault();
   document.querySelectorAll('nav a').forEach(x=>x.classList.remove('on'));a.classList.add('on');
   document.querySelectorAll('.pane').forEach(p=>p.classList.remove('on'));
