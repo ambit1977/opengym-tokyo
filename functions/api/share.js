@@ -37,7 +37,7 @@ export async function onRequestGet({ request, env }) {
     return J({ ok: true, facilities: list.keys.length });
   }
   const raw = await env.OGT_SHARED.get(KEY(f));
-  const rec = raw ? JSON.parse(raw) : { machines: [], contributions: 0 };
+  const rec = raw ? JSON.parse(raw) : { machines: [], settings: {}, contributions: 0 };
   return J({ ok: true, facility: f, ...rec });
 }
 
@@ -45,21 +45,27 @@ export async function onRequestPost({ request, env }) {
   const J = (o, st) => new Response(JSON.stringify(o), { status: st || 200,
     headers: { "content-type": "application/json; charset=utf-8" } });
   try {
-    const { facility, machines, consent } = await request.json();
+    const { facility, machines, settings, consent } = await request.json();
     if (!consent) return J({ error: "共有の同意がありません" }, 400);
-    if (!facility || !Array.isArray(machines) || !machines.length)
-      return J({ error: "施設名またはマシン情報がありません" }, 400);
+    if (!facility || (!Array.isArray(machines) && !settings))
+      return J({ error: "施設名または設定情報がありません" }, 400);
 
-    const clean = machines.slice(0, 40).filter(m => m && m.name).map(m => ({
+    const clean = (machines || []).slice(0, 40).filter(m => m && m.name).map(m => ({
       name: String(m.name).slice(0, 40),
       min: Number(m.min) || 0, max: Number(m.max) || 0, step: Number(m.step) || 0,
+      weights: Array.isArray(m.weights) ? m.weights.slice(0, 40).map(Number).filter(Number.isFinite) : undefined,
     }));
     const raw = await env.OGT_SHARED.get(KEY(facility));
-    const rec = raw ? JSON.parse(raw) : { machines: [], contributions: 0 };
-    rec.machines = mergeMachines(rec.machines, clean);
+    const rec = raw ? JSON.parse(raw) : { machines: [], settings: {}, contributions: 0 };
+    if (clean.length) rec.machines = mergeMachines(rec.machines || [], clean);
+    if (settings && typeof settings === "object") {
+      const keys = ["電話番号", "開始時間", "終了時間", "更衣室", "シャワー室", "車椅子可", "URL"];
+      rec.settings = { ...(rec.settings || {}) };
+      for (const k of keys) if (settings[k] != null && String(settings[k]).trim()) rec.settings[k] = String(settings[k]).slice(0, 300);
+    }
     rec.contributions = (rec.contributions || 0) + 1;
     rec.updated = new Date().toISOString();
     await env.OGT_SHARED.put(KEY(facility), JSON.stringify(rec));
-    return J({ ok: true, facility, machines: rec.machines, contributions: rec.contributions });
+    return J({ ok: true, facility, machines: rec.machines || [], settings: rec.settings || {}, contributions: rec.contributions });
   } catch (e) { return J({ error: String(e && e.message || e) }, 500); }
 }

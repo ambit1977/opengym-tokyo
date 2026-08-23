@@ -1,6 +1,7 @@
 <!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>オープンジム東京</title><meta name="theme-color" content="#FCF8F3">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -153,8 +154,15 @@
 <section id="p-find" class="pane">
   <h2>トレーニング室を<span class="em">探す</span></h2>
   <p class="lead">トレーニング室のある施設の一覧です。</p>
+  <div class="btnrow find-actions">
+    <button class="sm" id="btn-list" onclick="setFindView('list')">一覧で探す</button>
+    <button class="ghost sm" id="btn-map" onclick="setFindView('map')">地図で探す</button>
+    <button class="green sm" onclick="nearby()">現在地から近い順</button>
+  </div>
+  <div class="msg" id="near-st"></div>
   <label class="f" for="f-mun">区市で絞り込む</label>
   <select id="f-mun"></select>
+  <div id="gym-map" aria-label="トレーニング室の地図"></div>
   <div id="list"></div>
 </section>
 
@@ -210,6 +218,19 @@
   <div id="b-kpi"></div>
   <div id="b-chart"></div>
 
+  <h3>比較とAIアドバイス用プロフィール</h3>
+  <div class="card cream">
+    <div class="sub" style="margin-bottom:14px">年代・性別・居住エリアを設定すると、匿名共有したときに同じような人との比較ができ、AIの助言もあなたに合わせやすくなります。</div>
+    <label class="f" for="bp-age">年代</label>
+    <select id="bp-age"><option value="">選択してください</option><option>10代</option><option>20代</option><option>30代</option><option>40代</option><option>50代</option><option>60代</option><option>70代</option></select>
+    <label class="f" for="bp-sex">性別</label>
+    <select id="bp-sex"><option value="">選択してください</option><option>男</option><option>女</option><option>未回答</option></select>
+    <label class="f" for="bp-area">居住エリア</label>
+    <input id="bp-area" placeholder="例：練馬区（区市町村まで）">
+    <div class="msg" id="bp-st"></div>
+  </div>
+  <div id="body-compare"></div>
+
   <h3>今日の記録を追加</h3>
   <div class="card cream">
     <label class="f" for="bw">体重（kg）</label>
@@ -218,6 +239,9 @@
     <input id="bf" type="number" step="0.1" inputmode="decimal" placeholder="例：17.0">
     <label class="f" for="bm">筋肉量（kg）</label>
     <input id="bm" type="number" step="0.1" inputmode="decimal" placeholder="例：46.0">
+    <label class="cons"><input type="checkbox" id="body-share">
+      <span><b>体組成を匿名で共有する</b><br>
+      <span class="small">共有すると、同年代・同性別・同じ居住エリアなど、同じような人との比較情報を受け取れます。氏名・測定日・利用施設は送信しません。</span></span></label>
     <button onclick="addBody()">この内容で記録する</button>
     <div class="msg" id="body-st"></div>
   </div>
@@ -237,6 +261,41 @@
 </section>
 
 </main>
+<dialog id="fac-dialog" class="fac-dialog">
+  <form method="dialog" class="dialog-head"><strong id="fd-title">施設の設定</strong><button class="ghost sm" value="cancel">閉じる</button></form>
+  <div class="dialog-body">
+    <div class="sub" id="fd-address"></div>
+    <div id="fd-wanted" class="wanted-row"></div>
+    <section class="ai-assist" aria-labelledby="fd-ai-title">
+      <h3 id="fd-ai-title">AIで施設情報を入力</h3>
+      <div class="sub">案内プリントやマシンの写真、Webページ・メールからコピーした文章をもとに、設定候補を入力します。結果は保存前に必ず確認してください。</div>
+      <label class="f" for="fd-ai-text">コピーした文章</label>
+      <textarea id="fd-ai-text" placeholder="施設案内、利用時間、設備、マシン名や重量などを貼り付け"></textarea>
+      <div class="ai-upload-row">
+        <label class="upload-btn" for="fd-ai-image">カメラで撮る・画像を選ぶ</label>
+        <input id="fd-ai-image" type="file" accept="image/jpeg,image/png,image/webp" capture="environment">
+        <span id="fd-ai-file" class="small">画像は選択されていません</span>
+      </div>
+      <img id="fd-ai-preview" class="ai-preview" alt="選択した画像のプレビュー">
+      <div class="notice"><b>アップロード前の注意</b><br>写真撮影が禁止されている場所では撮影しないでください。二次利用・転載が禁止されているプリント、Webページ、メール、画像や、個人情報が写ったものはアップロードしないでください。画像と文章は設定候補の抽出時だけAIへ送信し、このサービスには保存しません。</div>
+      <button id="fd-ai-btn" type="button" onclick="assistFacility()">AIで設定候補を入力</button>
+      <div class="msg" id="fd-ai-st"></div>
+    </section>
+    <label class="f" for="fd-phone">電話番号</label><input id="fd-phone">
+    <div class="twocol"><div><label class="f" for="fd-open">開始時間</label><input id="fd-open" placeholder="例：09:00"></div><div><label class="f" for="fd-close">終了時間</label><input id="fd-close" placeholder="例：21:00"></div></div>
+    <div class="twocol"><div><label class="f" for="fd-change">更衣室</label><select id="fd-change"><option value="">不明</option><option>有</option><option>無</option></select></div><div><label class="f" for="fd-shower">シャワー</label><select id="fd-shower"><option value="">不明</option><option>有</option><option>無</option></select></div></div>
+    <label class="f" for="fd-wheel">車椅子対応</label><select id="fd-wheel"><option value="">不明</option><option>可</option><option>不可</option></select>
+    <label class="f" for="fd-url">公式URL</label><input id="fd-url" type="url">
+    <label class="f" for="fd-machines">マシン設定一覧</label>
+    <textarea id="fd-machines" placeholder="1行に1台：チェストプレス | 6 11 16 21"></textarea>
+    <div class="small">「マシン名 | 選べる重量」の形式です。保存後もいつでも修正できます。</div>
+    <div class="btnrow">
+      <button class="green" type="button" onclick="saveFacility(false)">個人用に保存</button>
+      <button type="button" onclick="saveFacility(true)">保存して共有する</button>
+    </div>
+    <div class="msg" id="fd-st"></div>
+  </div>
+</dialog>
 <nav>
   <a href="#" class="on" data-p="home"><svg width="28" height="28"><use href="#i-gym"/></svg>施設について</a>
   <a href="#" data-p="find"><svg width="28" height="28"><use href="#i-search"/></svg>探す</a>
@@ -245,5 +304,6 @@
   <a href="community.html"><svg width="28" height="28"><use href="#i-people"/></svg>みんな</a>
 </nav>
 <script src="data.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <script src="app.js"></script>
 </body></html>

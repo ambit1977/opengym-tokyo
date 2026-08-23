@@ -51,7 +51,7 @@ export async function onRequestPost({ request, env }) {
   const J = (o, st) => new Response(JSON.stringify(o), { status: st || 200,
     headers: { "content-type": "application/json; charset=utf-8" } });
   try {
-    const { facility, machines, history } = await request.json();
+    const { facility, machines, history, profile, body } = await request.json();
     if (!Array.isArray(machines) || !machines.length)
       return J({ error: "施設のマシン構成がありません" }, 400);
 
@@ -59,12 +59,17 @@ export async function onRequestPost({ request, env }) {
       .map(m => `${m.name}（${m.min}〜${m.max}kg / ${m.step}kg刻み）`).join("、");
     const hs = (history || []).slice(-12)
       .map(h => `${h.m} ${h.w}kg（${h.d}日前）`).join("、") || "記録なし（初回）";
+    const ps = profile && (profile.age || profile.sex || profile.area)
+      ? `${profile.age || "年代未設定"}・${profile.sex || "性別未設定"}・${profile.area || "居住エリア未設定"}` : "未設定";
+    const bs = body ? `体重${body.w ?? "—"}kg・体脂肪率${body.f ?? "—"}%・筋肉量${body.m ?? "—"}kg` : "記録なし";
 
     const user = [
       `施設: ${facility || "公営ジム"}`,
       `設置マシン: ${ms}`,
       `直近の記録: ${hs}`,
-      "この人への今日の助言を、上の3項目で。",
+      `プロフィール: ${ps}`,
+      `最新の体組成: ${bs}`,
+      "この人への今日の助言を、上の情報を根拠に。属性から健康状態を断定せず、無理のない提案にすること。",
     ].join("\n");
 
     let lastErr = "";

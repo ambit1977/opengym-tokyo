@@ -5,6 +5,7 @@
  * 近い属性の人の中での自分の位置と、伸びた人の傾向を返す。
  */
 const K = m => "cl:" + m;
+const BK = m => "cb:" + m;
 const CAP = 3000;
 
 const band = a => (a === "" || a == null) ? "" : String(a);
@@ -20,14 +21,14 @@ export async function onRequestPost({ request, env }) {
   const J = (o, st) => new Response(JSON.stringify(o), { status: st || 200,
     headers: { "content-type": "application/json; charset=utf-8" } });
   try {
-    const { consent, anonId, age, sex, goal, records } = await request.json();
+    const { consent, anonId, age, sex, area, goal, records, body } = await request.json();
     if (!consent) return J({ error: "共有の同意がありません" }, 400);
-    if (!anonId || !Array.isArray(records) || !records.length)
+    if (!anonId || ((!Array.isArray(records) || !records.length) && !body))
       return J({ error: "匿名IDまたは記録がありません" }, 400);
 
-    const prof = { a: band(age), s: sex || "", g: goal || "" };
+    const prof = { a: band(age), s: sex || "", ar: band(area), g: goal || "" };
     const touched = [];
-    for (const r of records.slice(0, 30)) {
+    for (const r of (records || []).slice(0, 30)) {
       if (!r || !r.machine || !(Number(r.weight) > 0)) continue;
       const key = K(r.machine);
       const raw = await env.OGT_SHARED.get(key);
@@ -38,19 +39,48 @@ export async function onRequestPost({ request, env }) {
       await env.OGT_SHARED.put(key, JSON.stringify(arr));
       touched.push(r.machine);
     }
-    return J({ ok: true, machines: touched });
+    const sharedBody = [];
+    if (body && typeof body === "object") {
+      for (const [metric, rawValue] of Object.entries({ weight: body.weight, fat: body.fat, muscle: body.muscle })) {
+        const value = Number(rawValue); if (!(value > 0)) continue;
+        const key = BK(metric), raw = await env.OGT_SHARED.get(key); let arr = raw ? JSON.parse(raw) : [];
+        arr = arr.filter(x => x.i !== anonId); arr.push({ i: anonId, ...prof, v: value });
+        if (arr.length > CAP) arr = arr.slice(-CAP); await env.OGT_SHARED.put(key, JSON.stringify(arr)); sharedBody.push(metric);
+      }
+    }
+    return J({ ok: true, machines: touched, body: sharedBody });
   } catch (e) { return J({ error: String(e && e.message || e) }, 500); }
 }
 
 export async function onRequestGet({ request, env }) {
   const u = new URL(request.url);
+  const type = u.searchParams.get("type") || "machine";
   const machine = u.searchParams.get("machine");
   const my = Number(u.searchParams.get("weight")) || 0;
   const age = u.searchParams.get("age") || "";
   const sex = u.searchParams.get("sex") || "";
+  const area = u.searchParams.get("area") || "";
   const goal = u.searchParams.get("goal") || "";
   const J = o => new Response(JSON.stringify(o),
     { headers: { "content-type": "application/json; charset=utf-8" } });
+  if (type === "body") {
+    const metrics = {};
+    for (const metric of ["weight", "fat", "muscle"]) {
+      const mine = Number(u.searchParams.get(metric)) || 0, raw = await env.OGT_SHARED.get(BK(metric));
+      const all = raw ? JSON.parse(raw) : [];
+      const tries = [
+        { f: x => x.a === age && x.s === sex && x.ar === area, label: "同年代・同性別・同じ居住エリア" },
+        { f: x => x.a === age && x.s === sex, label: "同年代・同性別" },
+        { f: x => x.a === age, label: "同年代" },
+        { f: () => true, label: "全体" },
+      ];
+      let use = tries[tries.length - 1];
+      for (const t of tries) { const vals = all.filter(t.f); if (vals.length >= 5 || t.label === "全体") { use = { ...t, vals }; break; } }
+      const vals = (use.vals || all.filter(use.f)).map(x => x.v), st = stats(vals);
+      metrics[metric] = { scope: use.label, stats: st, percentile: st && mine > 0 ? Math.round(vals.filter(v => v <= mine).length / vals.length * 100) : null, total: all.length };
+    }
+    return J({ ok: true, type: "body", metrics });
+  }
   if (!machine) return J({ error: "machine が必要です" });
 
   const raw = await env.OGT_SHARED.get(K(machine));

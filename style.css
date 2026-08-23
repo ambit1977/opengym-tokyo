@@ -120,6 +120,36 @@ label.cons b{font-weight:900}
 .tag{display:inline-block;font-size:15px;font-weight:900;border-radius:999px;padding:6px 14px;margin:0 8px 8px 0}
 .tag.y{background:var(--gr-l);color:var(--gr);border:2px solid #BFE3D0}
 .tag.n{background:#F6F2ED;color:#9A928A;border:2px solid var(--line)}
+.tag.wanted{background:var(--or-l);color:var(--or);border:2px solid #F6C79C;cursor:pointer}
+.tag.wanted::before{content:"●";font-size:11px;margin-right:6px}
+.wanted-row{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+
+/* 施設検索・地図 */
+.find-actions{margin:0 0 18px}
+#gym-map{height:520px;border:2px solid var(--line);border-radius:20px;overflow:hidden;margin:0 0 18px;display:none;background:var(--cream)}
+.leaflet-popup-content{font-family:inherit;font-size:15px;line-height:1.6;min-width:230px}
+.leaflet-popup-content .ttl{font-size:17px}
+.leaflet-popup-content button{font-size:14px;min-height:42px;padding:9px 14px;margin:5px 4px 0 0}
+.fac-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.fac-actions button{font-size:15px;min-height:46px;padding:10px 17px}
+
+/* 施設設定ダイアログ */
+.fac-dialog{width:min(760px,calc(100% - 24px));max-height:90vh;margin:auto;border:2px solid var(--line);border-radius:22px;background:#fff;color:var(--ink);padding:0;box-shadow:0 20px 70px rgba(0,0,0,.2)}
+.fac-dialog::backdrop{background:rgba(51,48,44,.48)}
+.dialog-head{position:sticky;top:0;z-index:2;background:var(--cream);border-bottom:2px solid var(--line);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.dialog-head strong{font-size:21px}.dialog-head button{margin:0}
+.dialog-body{padding:20px}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ai-assist{margin:16px 0 22px;padding:18px;border:2px solid #F4A261;border-radius:18px;background:#FFF8EC}
+.ai-assist h3{margin:0 0 7px}.ai-assist textarea{min-height:105px}
+.ai-upload-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0}
+.ai-upload-row input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.upload-btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:9px 16px;border:2px solid var(--line);border-radius:12px;background:#fff;font-weight:900;cursor:pointer}
+.ai-preview{display:none;width:100%;max-height:240px;object-fit:contain;margin:10px 0;border:2px solid var(--line);border-radius:14px;background:#fff}
+.notice{margin:12px 0;padding:12px 14px;border-left:5px solid var(--or);border-radius:8px;background:#fff;font-size:14px;line-height:1.65;color:var(--ink2)}
+
+.compare-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.compare-grid .card{padding:15px;margin:0}.compare-grid .num{font-size:34px}
 
 /* バー */
 .bar{margin-bottom:18px}
@@ -147,3 +177,9 @@ pre{background:var(--cream);border:2px solid var(--line);border-radius:14px;padd
 .hrow:first-child{border-top:none}
 .hdate{font-size:14px;color:var(--ink2);font-weight:700;min-width:64px}
 .hbody{flex:1;font-size:16px}
+
+@media(max-width:640px){
+  #gym-map{height:430px}
+  .twocol,.compare-grid{grid-template-columns:1fr}
+  .fac-actions button{width:100%}
+}
