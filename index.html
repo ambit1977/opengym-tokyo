@@ -107,6 +107,35 @@ pre{background:#0a0a0a;border:1px solid var(--ln);border-radius:9px;padding:11px
   <h2>きろく</h2>
   <select id="l-fac"></select>
   <div id="machines"></div>
+
+  <div class="card" style="border-style:dashed">
+    <div class="n" style="font-size:14px;margin-bottom:8px">＋ このジムにあったマシンを足す</div>
+    <input id="nm" placeholder="マシン名（例：アブドミナルクランチ）">
+    <div class="mrow">
+      <input id="mn" type="number" placeholder="最小kg" style="margin:0">
+      <input id="mx" type="number" placeholder="最大kg" style="margin:0">
+      <input id="sp" type="number" step="0.5" placeholder="刻みkg" style="margin:0">
+    </div>
+    <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;color:#9a9a9a;margin:10px 0">
+      <input type="checkbox" id="cons" checked style="width:auto;margin:2px 0 0">
+      <span>このマシン情報を<b style="color:#fff">この施設の共有データ</b>として提供する<br>
+      <span style="color:#666">※あなたの記録内容（重量・日付）は共有されません</span></span>
+    </label>
+    <button class="sm" onclick="addM()">追加する</button>
+    <div class="note" id="add-st"></div>
+  </div>
+
+  <div class="card" id="shared-box" style="display:none;border-color:#2a3a44">
+    <div class="n" style="font-size:14px;color:var(--cy)">みんなが整えた、この施設のデータ</div>
+    <div id="shared-body" class="rec" style="margin-top:8px"></div>
+    <button class="sm o" style="margin-top:10px" onclick="pull()">取り込んで使う</button>
+  </div>
+
+  <div id="coach-box" style="margin-top:18px">
+    <button class="g" id="btn-coach" onclick="coach()">AIトレーナーに相談する</button>
+    <div class="note" id="coach-st"></div>
+    <div id="coach-out" class="card" style="display:none;border-color:#1e4638;white-space:pre-wrap;font-size:13px;line-height:1.85"></div>
+  </div>
   <div class="note" id="log-st"></div>
 </section>
 
@@ -215,7 +244,68 @@ function save(i){const m=window._ms[i],f=$('#l-fac').value,w=parseFloat($('#w'+i
   log.push({f,m:m.name,w,t:Date.now()});LS.s('ogt_log',log);
   $('#s'+i).innerHTML=(prev&&w>prev.w)?`<span class="up">UP↑ 前回 ${prev.w}kg → ${w}kg</span>`:`保存しました（${w}kg）`;
   $('#log-st').textContent=`累計 ${log.length} 件を端末内に保存（オフライン動作）`;}
-$('#l-fac').onchange=mach; facs();
+async function addM(){
+  const f=$('#l-fac').value, nm=$('#nm').value.trim();
+  if(!nm){$('#add-st').innerHTML='<span class="warn">マシン名を入れてください</span>';return;}
+  const m={name:nm,min:+($('#mn').value||0),max:+($('#mx').value||0),step:+($('#sp').value||2.5)};
+  const conf=LS.g('ogt_conf',{}); conf[f]=[...(conf[f]||[]),m]; LS.s('ogt_conf',conf);
+  $('#nm').value=$('#mn').value=$('#mx').value=$('#sp').value='';
+  mach();
+  if($('#cons').checked){
+    try{
+      const r=await fetch('/api/share',{method:'POST',headers:{'content-type':'application/json'},
+        body:JSON.stringify({facility:f,machines:[m],consent:true})});
+      const j=await r.json();
+      $('#add-st').innerHTML=j.ok
+        ? `<span class="ok">追加し、共有しました。この施設は延べ ${j.contributions} 人の入力で ${j.machines.length} 台が登録されています。</span>`
+        : '<span class="warn">'+j.error+'</span>';
+      shared();
+    }catch(e){$('#add-st').innerHTML='<span class="warn">共有に失敗（記録には追加済み）</span>';}
+  } else { $('#add-st').innerHTML='<span class="ok">自分の記録にだけ追加しました。</span>'; }
+}
+
+let _shared=null;
+async function shared(){
+  const f=$('#l-fac').value; if(!f)return;
+  try{
+    const j=await (await fetch('/api/share?facility='+encodeURIComponent(f))).json();
+    if(!j.ok||!j.machines||!j.machines.length){$('#shared-box').style.display='none';return;}
+    _shared=j.machines;
+    $('#shared-body').innerHTML=
+      `延べ <b style="color:#fff">${j.contributions}</b> 人の入力から <b style="color:#fff">${j.machines.length}</b> 台<br>`+
+      j.machines.map(m=>`・${m.name}（${m.min}〜${m.max}kg / ${m.step}kg刻み）<span style="color:#666"> ${m.n}件</span>`).join('<br>');
+    $('#shared-box').style.display='block';
+  }catch(e){}
+}
+function pull(){if(!_shared)return;const f=$('#l-fac').value,conf=LS.g('ogt_conf',{});
+  const names=new Set((conf[f]||[]).map(m=>m.name));
+  conf[f]=[...(conf[f]||[]),..._shared.filter(m=>!names.has(m.name))
+    .map(m=>({name:m.name,min:m.min,max:m.max,step:m.step}))];
+  LS.s('ogt_conf',conf);mach();
+  $('#add-st').innerHTML='<span class="ok">共有データを取り込みました。設定作業ゼロで使えます。</span>';}
+
+async function coach(){const b=$('#btn-coach'),st=$('#coach-st'),o=$('#coach-out');
+  b.disabled=true;b.textContent='考えています…';st.textContent='';o.style.display='none';
+  try{
+    const f=$('#l-fac').value, conf=LS.g('ogt_conf',{}), ms=conf[f]||[];
+    const log=LS.g('ogt_log',[]).filter(l=>l.f===f).slice(-12)
+      .map(l=>({m:l.m,w:l.w,d:Math.floor((Date.now()-l.t)/864e5)}));
+    const r=await fetch('/api/coach',{method:'POST',headers:{'content-type':'application/json'},
+      body:JSON.stringify({facility:f,machines:ms,history:log})});
+    const j=await r.json(); if(!j.ok)throw new Error(j.error);
+    o.textContent=j.advice;o.style.display='block';
+    st.innerHTML=`<span class="ok">この施設にあるマシンだけを根拠に生成（${j.model}）</span>`;
+  }catch(e){st.innerHTML='<span class="warn">'+e.message+'</span>';}
+  b.disabled=false;b.textContent='AIトレーナーに相談する';}
+
+/* デモ用の記録を仕込む（初回のみ） */
+(function(){if(localStorage.getItem('ogt_log'))return;const d=864e5;
+ LS.s('ogt_log',[{f:"光が丘体育館",m:"ラットプルダウン",w:40,t:Date.now()-6*d},
+  {f:"光が丘体育館",m:"レッグプレス",w:60,t:Date.now()-6*d},
+  {f:"光が丘体育館",m:"ラットプルダウン",w:45,t:Date.now()-3*d},
+  {f:"光が丘体育館",m:"チェストプレス",w:25,t:Date.now()-3*d}]);})();
+
+$('#l-fac').onchange=()=>{mach();shared();}; facs(); shared();
 
 /* --- nav --- */
 
@@ -225,6 +315,7 @@ function go(id){document.querySelectorAll('nav a').forEach(x=>x.classList.toggle
  const el=$('#p-'+id); if(el)el.classList.add('on');}
 (function(){let h=(location.hash||'').replace('#','');
  if(h==='conf-demo'){go('conf');setTimeout(()=>ai(),300);return;}
+ if(h==='coach'){go('log');setTimeout(()=>coach(),400);return;}
  if(['data','find','conf','log'].includes(h))go(h);})();
 document.querySelectorAll('nav a').forEach(a=>a.onclick=e=>{e.preventDefault();
   document.querySelectorAll('nav a').forEach(x=>x.classList.remove('on'));a.classList.add('on');

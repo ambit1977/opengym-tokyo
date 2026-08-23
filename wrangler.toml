@@ -4,3 +4,7 @@ pages_build_output_dir = "."
 
 [ai]
 binding = "AI"
+
+[[kv_namespaces]]
+binding = "OGT_SHARED"
+id = "a6e2a162066f40e6b468e93fdfa127e4"
