@@ -1,6 +1,6 @@
 <!doctype html><html lang="ja"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>なかま — オープンジム東京</title><meta name="theme-color" content="#FCF8F3">
+<title>みんな — オープンジム東京</title><meta name="theme-color" content="#FCF8F3">
 <link rel="stylesheet" href="style.css">
 </head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -27,7 +27,7 @@
 </defs></svg>
 <header><div class="hwrap">
   <svg width="34" height="34"><use href="#i-people"/></svg>
-  <h1>なかま<small>ひとりで、つづけない</small></h1>
+  <h1>みんな<small>ひとりで、続けない</small></h1>
 </div></header>
 <main>
 
@@ -47,49 +47,49 @@
 </div>
 
 <h2>おなじくらいの人が、<br><span class="em">どれくらいか</span>わかります。</h2>
-<p class="lead">名前は出ません。年代と性別と目的だけで、ゆるくくらべます。</p>
+<p class="lead">氏名は公開されません。年代・性別・目的が近い人と比較します。</p>
 
-<h3>さんかする</h3>
+<h3>参加する</h3>
 <div class="card cream">
   <label class="f" for="age">年代</label>
-  <select id="age"><option value="">えらんでください</option></select>
+  <select id="age"><option value="">選択してください</option></select>
   <label class="f" for="sex">性別</label>
-  <select id="sex"><option value="">えらんでください</option><option>男性</option><option>女性</option><option>答えない</option></select>
-  <label class="f" for="goal">なんのために</label>
-  <select id="goal"><option value="">えらんでください</option><option>筋力アップ</option><option>減量</option><option>健康維持</option><option>リハビリ</option></select>
+  <select id="sex"><option value="">選択してください</option><option>男性</option><option>女性</option><option>回答しない</option></select>
+  <label class="f" for="goal">目的</label>
+  <select id="goal"><option value="">選択してください</option><option>筋力アップ</option><option>減量</option><option>健康維持</option><option>リハビリ</option></select>
 
   <label class="cons"><input type="checkbox" id="cons">
-    <span><b>じぶんの記録を、名前をふせて出す</b><br>
-    <span class="small">おくるのは　年代・性別・目的・種目ごとの一番重かった重さ　だけです。<br>
+    <span><b>自分の記録を匿名で共有する</b><br>
+    <span class="small">共有するのは、年代・性別・目的・種目ごとの自己ベスト重量のみです。<br>
     お名前、いつ行ったか、どのジムかは、おくりません。いつでもやめられます。</span></span></label>
   <div class="btnrow">
-    <button onclick="join()">これでさんかする</button>
-    <button class="ghost sm" onclick="leave()">やめる</button>
+    <button onclick="join()">この内容で参加する</button>
+    <button class="ghost sm" onclick="leave()">参加をやめる</button>
   </div>
   <div class="msg" id="join-st"></div>
 </div>
 
-<h3>いま、どのあたり？</h3>
+<h3>クラスタ内での位置</h3>
 <div class="card">
   <label class="f" for="mach">種目をえらぶ</label>
-  <select id="mach"><option value="">えらんでください</option></select>
+  <select id="mach"><option value="">選択してください</option></select>
   <div id="pos"></div>
 </div>
 
-<h3>こんしゅうの みんなの企画</h3>
+<h3>今週のバーチャルイベント</h3>
 <div class="card or" id="ev"><div class="sub">よみこみ中…</div></div>
 
 <div class="small" style="margin-top:20px">
   ※ 名前のかわりに、この端末でつくった数字を使っています。だれかは分かりません。<br>
-  ※ いまの人数には、動作をたしかめるためのサンプルが入っています。
+  ※ 現在の人数には、動作確認用のサンプルを含みます。
 </div>
 </main>
 <nav>
-  <a href="index.html#home"><svg width="28" height="28"><use href="#i-gym"/></svg>まちのジム</a>
-  <a href="index.html#find"><svg width="28" height="28"><use href="#i-search"/></svg>さがす</a>
-  <a href="index.html#log"><svg width="28" height="28"><use href="#i-note"/></svg>きろく</a>
-  <a href="index.html#body"><svg width="28" height="28"><use href="#i-body"/></svg>からだ</a>
-  <a href="community.html" class="on"><svg width="28" height="28"><use href="#i-people"/></svg>なかま</a>
+  <a href="index.html#home"><svg width="28" height="28"><use href="#i-gym"/></svg>施設について</a>
+  <a href="index.html#find"><svg width="28" height="28"><use href="#i-search"/></svg>探す</a>
+  <a href="index.html#log"><svg width="28" height="28"><use href="#i-note"/></svg>記録</a>
+  <a href="index.html#body"><svg width="28" height="28"><use href="#i-body"/></svg>体組成</a>
+  <a href="community.html" class="on"><svg width="28" height="28"><use href="#i-people"/></svg>みんな</a>
 </nav>
 <script src="community.js"></script>
 </body></html>

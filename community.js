@@ -19,33 +19,33 @@ if(new URLSearchParams(location.search).get('demo')){
 
 const P=LS.g('ogt_prof',null);
 if(P){$('#age').value=P.age||'';$('#sex').value=P.sex||'';$('#goal').value=P.goal||'';
- $('#cons').checked=true;say('#join-st','さんか中です。',1);}
+ $('#cons').checked=true;say('#join-st','参加中です。',1);}
 
 async function join(){
- if(!$('#cons').checked){say('#join-st','チェックを入れてください',0);return;}
+ if(!$('#cons').checked){say('#join-st','同意にチェックを入れてください',0);return;}
  const rec=bests();
- if(!rec.length){say('#join-st','さきに「きろく」を1つつけてください',0);return;}
+ if(!rec.length){say('#join-st','先に「記録」で1件記録してください',0);return;}
  const prof={age:$('#age').value,sex:$('#sex').value,goal:$('#goal').value};
  LS.s('ogt_prof',prof);
  try{const j=await (await fetch('/api/cluster',{method:'POST',headers:{'content-type':'application/json'},
    body:JSON.stringify({consent:true,anonId:anonId(),...prof,records:rec})})).json();
-  say('#join-st',j.ok?`${j.machines.length}種目を、名前をふせて出しました。`:esc(j.error),j.ok);fillMach();
- }catch(e){say('#join-st','おくれませんでした',0);}}
+  say('#join-st',j.ok?`${j.machines.length}種目を匿名で共有しました。`:esc(j.error),j.ok);fillMach();
+ }catch(e){say('#join-st','共有に失敗しました',0);}}
 function leave(){localStorage.removeItem('ogt_prof');$('#cons').checked=false;
- say('#join-st','やめました。これ以上おくりません。',1);}
+ say('#join-st','参加を停止しました。以後は共有されません。',1);}
 
 function fillMach(){const b=bests();
- $('#mach').innerHTML='<option value="">えらんでください</option>'+
-  b.map(x=>`<option value="${esc(x.machine)}" data-w="${x.weight}">${esc(x.machine)}（じぶんは ${x.weight}kg）</option>`).join('');}
+ $('#mach').innerHTML='<option value="">選択してください</option>'+
+  b.map(x=>`<option value="${esc(x.machine)}" data-w="${x.weight}">${esc(x.machine)}（自己ベスト ${x.weight}kg）</option>`).join('');}
 fillMach();
 
 async function showPos(){
  const el=$('#mach'),m=el.value;if(!m){$('#pos').innerHTML='';return;}
  const my=+el.selectedOptions[0].dataset.w,p=LS.g('ogt_prof',{});
- $('#pos').innerHTML='<div class="sub">かぞえています…</div>';
+ $('#pos').innerHTML='<div class="sub">集計しています…</div>';
  try{const q=new URLSearchParams({machine:m,weight:my,age:p.age||'',sex:p.sex||'',goal:p.goal||''});
   const j=await (await fetch('/api/cluster?'+q)).json();
-  if(!j.ok||!j.stats){$('#pos').innerHTML='<div class="sub">まだくらべられる人がいません。</div>';return;}
+  if(!j.ok||!j.stats){$('#pos').innerHTML='<div class="sub">まだ比較できるデータがありません。</div>';return;}
   const s=j.stats,lo=s.min,hi=s.max,rng=(hi-lo)||1,px=x=>((x-lo)/rng*100);
   const rank=j.percentile==null?null:Math.max(1,Math.round(s.n*(100-j.percentile)/100));
   const W=680,H=120;
@@ -65,7 +65,7 @@ async function showPos(){
    </svg>
    <div class="small">青いおびは、まんなかあたりの半分の人（${s.q1}〜${s.q3}kg）。<br>
    この種目は、ぜんぶで ${j.total} 人が出しています。</div>`;
- }catch(e){$('#pos').innerHTML='<div class="msg ng">かぞえられませんでした</div>';}}
+ }catch(e){$('#pos').innerHTML='<div class="msg ng">集計に失敗しました</div>';}}
 $('#mach').onchange=showPos;
 if(new URLSearchParams(location.search).get('demo'))
  setTimeout(()=>{const o=$('#mach').querySelector('option[value="チェストプレス"]');
@@ -78,23 +78,23 @@ async function loadEv(){
    <div class="ttl">${esc(j.title)}</div>
    <div class="sub">${esc(j.body)}</div>
    <div class="track" style="margin:16px 0 8px"><i class="f-or" style="width:${pct}%"></i></div>
-   <div class="sub">みんなで <b>${j.total}</b> / ${j.goal}${esc(j.unit)}　　${j.people}人がさんか中</div>
+   <div class="sub">みんなで <b>${j.total}</b> / ${j.goal}${esc(j.unit)}　　参加 ${j.people} 人</div>
    <div style="display:flex;gap:12px;align-items:center;margin-top:16px;flex-wrap:wrap">
      <input id="amt" type="number" value="10" min="1" max="500" inputmode="numeric" style="width:120px;margin:0">
      <span style="font-size:18px;font-weight:700">${esc(j.unit)}やった</span>
      <button class="green" onclick="push()">つたえる</button>
    </div>
    <div id="cheer"></div>
-   <div class="small" style="margin-top:12px">この企画は、AIが毎週かんがえています。</div>`;
- }catch(e){$('#ev').innerHTML='<div class="msg ng">よみこめませんでした</div>';}}
+   <div class="small" style="margin-top:12px">この企画はAIが毎週生成しています。</div>`;
+ }catch(e){$('#ev').innerHTML='<div class="msg ng">読み込みに失敗しました</div>';}}
 loadEv();
 
 async function push(){const a=+($('#amt').value||0);
- $('#cheer').innerHTML='<div class="sub">おくっています…</div>';
+ $('#cheer').innerHTML='<div class="sub">送信しています…</div>';
  try{const j=await (await fetch('/api/event',{method:'POST',headers:{'content-type':'application/json'},
    body:JSON.stringify({anonId:anonId(),amount:a})})).json();
   if(!j.ok)throw new Error(j.error);
   $('#cheer').innerHTML=`<div class="card" style="background:#fff;margin-top:14px">
     <div style="font-size:19px;font-weight:900;line-height:1.7">${esc(j.cheer)}</div>
-    <div class="small" style="margin-top:6px">なかまより</div></div>`;
+    <div class="small" style="margin-top:6px">みんなより</div></div>`;
   loadEv();}catch(e){$('#cheer').innerHTML='<div class="msg ng">'+esc(e.message)+'</div>';}}
